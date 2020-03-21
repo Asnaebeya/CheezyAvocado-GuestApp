@@ -41,7 +41,7 @@ const CardInformation = () => {
 
             <Grid columns={2} style={{ marginTop: "6em" }}>
                 <Grid.Column>
-                    <Card as={Link} to="/list">
+                    <Card as={Link} to="/list/amenity">
                         <Image
                             src="https://image.flaticon.com/icons/svg/2558/2558012.svg"
                             wrapped
@@ -56,7 +56,7 @@ const CardInformation = () => {
                 </Grid.Column>
 
                 <Grid.Column>
-                    <Card>
+                    <Card as={Link} to="/list/food">
                         <Image
                             src="https://image.flaticon.com/icons/svg/706/706164.svg"
                             wrapped

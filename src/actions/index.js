@@ -32,9 +32,9 @@ export const changeAuth = isLoggedIn => {
     return { type: actionTypes.AUTH_CHANGE, payload: isLoggedIn };
 };
 
-export const updateOrderedItem = orderedItem => {
+export const updateOrderedItem = ({ orderedItems, type }) => {
     return {
         type: actionTypes.SELECTED_ORDER,
-        payload: orderedItem
+        payload: { orderedItems: orderedItems, type: type }
     };
 };

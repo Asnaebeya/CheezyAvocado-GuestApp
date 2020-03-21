@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Button, Item, Container, Header } from "semantic-ui-react";
+import { Button, Item, Container, Header, Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { updateOrderedItem } from "../actions";
 import history from "../history";
 import RenderCardList from "./RenderCardList";
 import "./OrderItemCard.css";
+import _ from "lodash";
+
+// ORDERED LIST OF FOOD OR AMENITIES
 
 const OrderedItemCard = props => {
+    console.log(props);
     const [foods, setFoods] = useState(props.currentOrder);
 
     useEffect(() => {
@@ -15,7 +19,10 @@ const OrderedItemCard = props => {
 
     useEffect(() => {
         let orderedFoods = foods.filter(food => food.amount > 0);
-        props.updateOrderedItem(orderedFoods);
+        props.updateOrderedItem({
+            orderedItems: orderedFoods,
+            type: props.type
+        });
     }, [foods]);
 
     const calculateCost = () => {
@@ -27,8 +34,8 @@ const OrderedItemCard = props => {
         return cost;
     };
 
-    const increaseHandle = foodID => {
-        const foodIndex = foods.findIndex(obj => obj.foodID === foodID);
+    const increaseHandle = id => {
+        const foodIndex = foods.findIndex(obj => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
             amount: foods[foodIndex].amount + 1
@@ -42,8 +49,8 @@ const OrderedItemCard = props => {
         return;
     };
 
-    const decreaseHandle = foodID => {
-        const foodIndex = foods.findIndex(obj => obj.foodID === foodID);
+    const decreaseHandle = id => {
+        const foodIndex = foods.findIndex(obj => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
             amount:
@@ -67,23 +74,11 @@ const OrderedItemCard = props => {
         // history.push("/status");
     };
 
-    const BackButtonCLickHandler = () => {
-        history.push("/list");
-    };
-
     return (
         <div>
-            <Button
-                style={{ margin: "0 2em 0 0" }}
-                circular
-                icon="angle left"
-                floated="left"
-                onClick={() => BackButtonCLickHandler()}
-            />
-
             <br />
 
-            <Container style={{ marginTop: "3em" }}>
+            <Container style={{ marginTop: "1em" }}>
                 <Item.Group unstackable={true}>
                     <RenderCardList
                         foods={foods}
@@ -92,10 +87,14 @@ const OrderedItemCard = props => {
                     />
                 </Item.Group>
                 <div className="order-content">
-                    <div>
-                        <Header sub>Price</Header>
-                        <span>{calculateCost()}฿</span>
-                    </div>
+                    {props.type === "food" ? (
+                        <div>
+                            <Header sub>Price</Header>
+                            <span>{calculateCost()}฿</span>
+                        </div>
+                    ) : (
+                        <span></span>
+                    )}
 
                     <Button
                         style={{ marginRight: "1em" }}
@@ -111,7 +110,8 @@ const OrderedItemCard = props => {
 
 const mapStatetoProps = state => {
     return {
-        currentOrder: state.order.currentOrder
+        currentOrder: state.order.currentOrder.orderedItems,
+        type: state.order.currentOrder.type
     };
 };
 

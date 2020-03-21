@@ -14,6 +14,8 @@ import history from "../history";
 import RenderCardList from "./RenderCardList";
 import "./OrderItemCard.css";
 
+// LIST OF ITEMS LIKE FOOD AND AMENITIES
+
 const PlaceholderExampleParagraph = () => (
     <Placeholder>
         <Placeholder.Paragraph>
@@ -76,17 +78,68 @@ const INITIAL_STATE = {
     ]
 };
 
+const amenities = [
+    {
+        amenityID: "0001",
+        amenityName: "Towel",
+        amenityIcon: "https://image.flaticon.com/icons/svg/1986/1986380.svg",
+        description: "Batman is like superman"
+    },
+    {
+        amenityID: "0002",
+        amenityName: "Shampoo",
+        amenityIcon: "https://image.flaticon.com/icons/svg/1848/1848354.svg",
+        description: "Batman is like superman"
+    },
+    {
+        amenityID: "0003",
+        amenityName: "Soap",
+        amenityIcon: "https://image.flaticon.com/icons/svg/2707/2707432.svg",
+        description: "Batman is like superman"
+    },
+    {
+        amenityID: "0004",
+        amenityName: "Toothbrush",
+        amenityIcon: "https://image.flaticon.com/icons/svg/458/458153.svg",
+        description: "Batman is like superman"
+    }
+];
+
 const ItemCard = props => {
-    let usableFoods = INITIAL_STATE.foods.map(food => {
-        return { ...food, amount: 0 };
-    });
-    console.log(usableFoods);
-    const [foods, setFoods] = useState(usableFoods);
+    console.log(props);
+
+    const initialState = () => {
+        if (props.type === "food") {
+            let usableFoods = INITIAL_STATE.foods.map(obj => {
+                return {
+                    id: obj.foodID,
+                    name: obj.foodName,
+                    price: obj.price,
+                    description: obj.description,
+                    image: obj.foodImage,
+                    amount: 0
+                };
+            });
+            return usableFoods;
+        } else if (props.type === "amenity") {
+            let usableAmenities = amenities.map(obj => {
+                return {
+                    id: obj.amenityID,
+                    name: obj.amenityName,
+                    description: obj.description,
+                    image: obj.amenityIcon,
+                    amount: 0
+                };
+            });
+            return usableAmenities;
+        }
+    };
+    const [foods, setFoods] = useState(initialState());
 
     useEffect(() => {
-        let IdOfCurrentOrder = props.currentOrder.map(food => food.foodID);
-        let notContainingArray = usableFoods.filter(
-            food => !IdOfCurrentOrder.includes(food.foodID)
+        let IdOfCurrentOrder = props.currentOrder.map(food => food.id);
+        let notContainingArray = foods.filter(
+            food => !IdOfCurrentOrder.includes(food.id)
         );
         setFoods([...props.currentOrder, ...notContainingArray]);
         calculateCost();
@@ -96,13 +149,12 @@ const ItemCard = props => {
         let cost = foods.reduce((prev, cur) => {
             return prev + cur.price * cur.amount;
         }, 0);
-
         console.log("cost:", cost);
         return cost;
     };
 
-    const increaseHandle = foodID => {
-        const foodIndex = foods.findIndex(obj => obj.foodID === foodID);
+    const increaseHandle = id => {
+        const foodIndex = foods.findIndex(obj => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
             amount: foods[foodIndex].amount + 1
@@ -115,8 +167,8 @@ const ItemCard = props => {
         return;
     };
 
-    const decreaseHandle = foodID => {
-        const foodIndex = foods.findIndex(obj => obj.foodID === foodID);
+    const decreaseHandle = id => {
+        const foodIndex = foods.findIndex(obj => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
             amount:
@@ -128,30 +180,46 @@ const ItemCard = props => {
             updateObject,
             ...foods.slice(foodIndex + 1)
         ]);
+
         return;
     };
 
     const orderClickHandler = () => {
         let orderedFoods = foods.filter(food => food.amount > 0);
-        console.log(orderedFoods);
-        props.updateOrderedItem(orderedFoods);
+        console.log({ orderedItems: orderedFoods, type: props.type });
+        let payload = { orderedItems: orderedFoods, type: props.type };
+        props.updateOrderedItem(payload);
+
         history.push("/order");
     };
 
+    const conditionalRender = () => {
+        if (props.type === "food") {
+            return (
+                <div>
+                    <Header sub>Price</Header>
+                    <span>{calculateCost()}฿</span>
+                </div>
+            );
+        } else if (props.type === "amenity") {
+            return <span>Free</span>;
+        }
+
+        return;
+    };
+
     return (
-        <Container style={{ marginTop: "3em" }}>
+        <Container style={{ marginTop: "1em" }}>
             <Item.Group unstackable={true}>
                 <RenderCardList
                     foods={foods}
                     increaseHandle={increaseHandle}
                     decreaseHandle={decreaseHandle}
+                    type={props.type}
                 />
             </Item.Group>
             <div className="order-content">
-                <div>
-                    <Header sub>Price</Header>
-                    <span>{calculateCost()}฿</span>
-                </div>
+                {conditionalRender()}
 
                 <Button
                     style={{ marginRight: "1em" }}
@@ -166,7 +234,7 @@ const ItemCard = props => {
 
 const mapStatetoProps = state => {
     return {
-        currentOrder: state.order.currentOrder
+        currentOrder: state.order.currentOrder.orderedItems
     };
 };
 

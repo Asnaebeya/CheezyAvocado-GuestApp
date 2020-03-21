@@ -3,18 +3,25 @@ import { Button, Icon, Image, Item, Segment } from "semantic-ui-react";
 import "./RenderCardList.css";
 
 export default props => {
+    let { type } = props;
+
     return props.foods.map(food => {
         return (
-            <Item key={food.foodID} className="ui segment item">
+            <Item key={food.id} className="ui segment item">
                 <Item.Image
                     style={{ height: 150, width: 150 }}
-                    src={food.foodImage}
+                    src={food.image}
                 />
 
                 <Item.Content style={{ margin: "0 0 0 1em" }}>
-                    <Item.Header>{food.foodName}</Item.Header>
+                    <Item.Header>{food.name}</Item.Header>
+
                     <Item.Meta>
-                        <span className="price">{`${food.price}฿`}</span>
+                        {type === "food" ? (
+                            <span className="price">{`${food.price}฿  ${type}`}</span>
+                        ) : (
+                            <span>Free</span>
+                        )}
                     </Item.Meta>
                     <Item.Description>{food.description}</Item.Description>
                     <Item.Extra>
@@ -24,7 +31,7 @@ export default props => {
                             size="mini"
                             color="red"
                             floated="right"
-                            onClick={() => props.increaseHandle(food.foodID)}
+                            onClick={() => props.increaseHandle(food.id)}
                         ></Button>
                         <Button
                             circular
@@ -40,7 +47,7 @@ export default props => {
                             size="mini"
                             color="blue"
                             floated="right"
-                            onClick={() => props.decreaseHandle(food.foodID)}
+                            onClick={() => props.decreaseHandle(food.id)}
                         ></Button>
                     </Item.Extra>
                 </Item.Content>

@@ -5,9 +5,12 @@ const INITIAL_STATE = {
         // {{},{},{}},
         // {{},{},{}}
     ],
-    currentOrder: [
-        // {},{},{}
-    ]
+    currentOrder: {
+        orderedItems: [],
+        type: ""
+        // type string
+        // [{},{},{}]
+    }
 };
 
 export default (state = INITIAL_STATE, action) => {

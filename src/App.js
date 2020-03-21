@@ -11,11 +11,13 @@ const App = props => {
     return (
         <div>
             <Header />
-            <Route path="/" exact component={SignIn} />
-            <Route path="/welcome" component={Welcome} />
-            <Route path="/list" component={ItemList} />
-            <Route path="/order" component={OrderPage} />
-            <Route path="/status" component={OrderStatus} />
+            <Switch>
+                <Route path="/" exact component={SignIn} />
+                <Route path="/welcome" component={Welcome} />
+                <Route path="/list/:type" component={ItemList} />
+                <Route path="/order" component={OrderPage} />
+                <Route path="/status" component={OrderStatus} />
+            </Switch>
         </div>
     );
 };
