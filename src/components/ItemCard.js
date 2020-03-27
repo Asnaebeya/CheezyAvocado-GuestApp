@@ -16,20 +16,6 @@ import "./OrderItemCard.css";
 
 // LIST OF ITEMS LIKE FOOD AND AMENITIES
 
-const PlaceholderExampleParagraph = () => (
-    <Placeholder>
-        <Placeholder.Paragraph>
-            <Placeholder.Line />
-            <Placeholder.Line />
-            <Placeholder.Line />
-        </Placeholder.Paragraph>
-    </Placeholder>
-);
-const PlaceholderExampleImage = () => (
-    <Placeholder style={{ height: "150px", width: "150px" }}>
-        <Placeholder.Image />
-    </Placeholder>
-);
 
 //         {"foodID": "0001",
 //         "foodName": "Prawn Pad Thai",
@@ -52,7 +38,7 @@ const INITIAL_STATE = {
             foodID: "0002",
             foodName: "Pizza Hut",
             price: 20,
-            description: "I like to eat banana",
+            description: "I like to eat banana with pizza",
 
             foodImage:
                 "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20190503-delish-pineapple-baked-salmon-horizontal-ehg-450-1557771120.jpg?crop=0.669xw:1.00xh;0.173xw,0&resize=640:*"
@@ -61,20 +47,21 @@ const INITIAL_STATE = {
             foodID: "0003",
             foodName: "Noodle",
             price: 150,
-            description: "Batman is like superman",
+            description: "Better than apples",
 
             foodImage:
                 "https://i0.wp.com/cdn-prod.medicalnewstoday.com/content/images/articles/322/322284/berries-are-good-food-for-high-blood-pressure.jpg?w=1155&h=1541"
-        },
-        {
-            foodID: "0004",
-            foodName: "French Fries",
-            price: 40,
-            description: "Burger King is my ronaldoo",
-
-            foodImage:
-                "https://images2.minutemediacdn.com/image/upload/c_crop,h_1126,w_2000,x_0,y_181/f_auto,q_auto,w_1100/v1554932288/shape/mentalfloss/12531-istock-637790866.jpg"
         }
+        // ,
+        // {
+        //     foodID: "0004",
+        //     foodName: "French Fries",
+        //     price: 40,
+        //     description: "Burger King is my ronaldoo",
+
+        //     foodImage:
+        //         "https://images2.minutemediacdn.com/image/upload/c_crop,h_1126,w_2000,x_0,y_181/f_auto,q_auto,w_1100/v1554932288/shape/mentalfloss/12531-istock-637790866.jpg"
+        // }
     ]
 };
 
@@ -83,26 +70,27 @@ const amenities = [
         amenityID: "0001",
         amenityName: "Towel",
         amenityIcon: "https://image.flaticon.com/icons/svg/1986/1986380.svg",
-        description: "Batman is like superman"
+        description: "Fluffy like cotton"
     },
     {
         amenityID: "0002",
         amenityName: "Shampoo",
         amenityIcon: "https://image.flaticon.com/icons/svg/1848/1848354.svg",
-        description: "Batman is like superman"
+        description: "Anti Dandruff included"
     },
     {
         amenityID: "0003",
         amenityName: "Soap",
         amenityIcon: "https://image.flaticon.com/icons/svg/2707/2707432.svg",
-        description: "Batman is like superman"
-    },
-    {
-        amenityID: "0004",
-        amenityName: "Toothbrush",
-        amenityIcon: "https://image.flaticon.com/icons/svg/458/458153.svg",
-        description: "Batman is like superman"
+        description: "Peach smell"
     }
+    // ,
+    // {
+    //     amenityID: "0004",
+    //     amenityName: "Toothbrush",
+    //     amenityIcon: "https://image.flaticon.com/icons/svg/458/458153.svg",
+    //     description: "Batman is like superman"
+    // }
 ];
 
 const ItemCard = props => {

@@ -18,7 +18,7 @@ export default props => {
 
                     <Item.Meta>
                         {type === "food" ? (
-                            <span className="price">{`${food.price}฿  ${type}`}</span>
+                            <span className="price">{`${food.price}฿`}</span>
                         ) : (
                             <span>Free</span>
                         )}

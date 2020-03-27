@@ -14,13 +14,13 @@ import { Link } from "react-router-dom";
 const INITIAL_STATE = {
     token: "",
     room: 3,
-    FirstName: "Ronaldo",
-    LastName: "Messi"
+    FirstName: "Natthadech",
+    LastName: "Bale"
 };
 
 const CardInformation = () => {
     return (
-        <Container>
+        <Container style={{ marginTop: "2em" }}>
             <div>
                 <Header as="h2" attached="top">
                     {`Hello, ${INITIAL_STATE.LastName}`}
@@ -32,8 +32,10 @@ const CardInformation = () => {
                 </Segment>
             </div>
             <Button
+                as={Link}
                 style={{ marginTop: "1em", marginLeft: 180 }}
                 floated="right"
+                to="/bill"
             >
                 View Bill Payment
             </Button>

@@ -36,6 +36,7 @@ const Header = props => {
             <Link to="/list/food">ItemList</Link>
             <Link to="/order">OrderPage</Link>
             <Link to="/status">OrderStatus</Link>
+            <Link to="/bill">Bill</Link>
             {renderAuthButton()}
         </div>
     );

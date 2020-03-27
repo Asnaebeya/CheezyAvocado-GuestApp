@@ -19,8 +19,11 @@ const ItemList = props => {
     };
 
     const BackButtonCLickHandler = () => {
-        updateOrderedItem({ orderedItems: [], type: "" });
+        props.updateOrderedItem({ orderedItems: [], type: "" });
+
         history.push("/welcome");
+        
+        
     };
 
     return (
@@ -42,3 +45,5 @@ const ItemList = props => {
 };
 
 export default connect(null, { updateOrderedItem })(ItemList);
+
+

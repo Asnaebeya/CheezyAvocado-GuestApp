@@ -84,6 +84,7 @@ const OrderedItemCard = props => {
                         foods={foods}
                         increaseHandle={increaseHandle}
                         decreaseHandle={decreaseHandle}
+                        type={props.type}
                     />
                 </Item.Group>
                 <div className="order-content">

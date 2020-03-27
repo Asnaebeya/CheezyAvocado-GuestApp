@@ -1,9 +1,10 @@
-import React from "react";
+import React,{useState} from "react";
 import { Field, reduxForm } from "redux-form";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import history from "../history";
-import { signin } from "../actions";
+
+// import { signin } from "../actions";
 
 const renderError = ({ error, touched }) => {
     if (error && touched) {
@@ -30,6 +31,7 @@ const renderInput = props => {
 
 const SignIn = props => {
     const { handleSubmit } = props;
+    const []
 
     const onSubmit = formProps => {
         console.log(formProps);
@@ -80,6 +82,6 @@ const mapStateToProps = state => {
 };
 
 export default compose(
-    connect(mapStateToProps, { signin }),
+    connect(mapStateToProps), // { signin }
     reduxForm({ form: "signin" })
 )(SignIn);

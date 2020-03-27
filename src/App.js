@@ -6,6 +6,7 @@ import SignIn from "./router/SignIn";
 import ItemList from "./router/ItemList";
 import OrderPage from "./router/OrderPage";
 import OrderStatus from "./router/OrderStatus";
+import ViewBillPayment from "./router/ViewBillPayment";
 
 const App = props => {
     return (
@@ -17,6 +18,7 @@ const App = props => {
                 <Route path="/list/:type" component={ItemList} />
                 <Route path="/order" component={OrderPage} />
                 <Route path="/status" component={OrderStatus} />
+                <Route path="/bill" component={ViewBillPayment} />
             </Switch>
         </div>
     );
