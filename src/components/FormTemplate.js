@@ -6,6 +6,8 @@ import history from "../history";
 
 // import { signin } from "../actions";
 
+// this file is not used
+
 const renderError = ({ error, touched }) => {
     if (error && touched) {
         return (
@@ -31,7 +33,6 @@ const renderInput = props => {
 
 const SignIn = props => {
     const { handleSubmit } = props;
-    const []
 
     const onSubmit = formProps => {
         console.log(formProps);

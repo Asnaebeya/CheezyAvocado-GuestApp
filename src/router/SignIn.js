@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import * as actions from "../actions";
 import "./SignIn.css";
 import Modal from "../components/Modal";
-import { Message, Image, Header } from "semantic-ui-react";
+import { Message, Image, Header, Icon } from "semantic-ui-react";
 import history from "../history";
 
 const renderError = ({ error, touched }) => {
@@ -105,6 +105,21 @@ const SignIn = props => {
                 />
                 <button className="ui button primary">Enter</button>
                 <div>{props.errorMessage}</div>
+                <Header
+                    as="h2"
+                    icon
+                    style={{
+                        marginTop: "2vh",
+                        marginLeft: "2vw",
+                        marginRight: "2vw"
+                    }}
+                >
+                    This is for Testing Only
+                    <Header.Subheader>
+                        Type in any room number, any last name, and any
+                        password. Then press enter.
+                    </Header.Subheader>
+                </Header>
             </form>
         </>
     );

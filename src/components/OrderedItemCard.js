@@ -6,12 +6,14 @@ import history from "../history";
 import RenderCardList from "./RenderCardList";
 import "./OrderItemCard.css";
 import _ from "lodash";
+import Modal from "./Modal";
 
 // ORDERED LIST OF FOOD OR AMENITIES
 
 const OrderedItemCard = props => {
     console.log(props);
     const [foods, setFoods] = useState(props.currentOrder);
+    const [modal, setModal] = useState(false);
 
     useEffect(() => {
         calculateCost();
@@ -68,7 +70,19 @@ const OrderedItemCard = props => {
 
     const ConfirmOrderClickHandler = () => {
         // let orderedFoods = foods.filter(food => food.amount > 0);
-        console.log("send request to server ");
+
+        if (
+            props.currentOrder === undefined ||
+            props.currentOrder.length === 0
+        ) {
+            console.log("send request to server in if");
+            // array empty or does not exist
+
+            setModal(true);
+        } else {
+            history.push("/status");
+        }
+
         // update history
         // props.updateOrderedItem(orderedFoods);
         // history.push("/status");
@@ -76,6 +90,16 @@ const OrderedItemCard = props => {
 
     return (
         <div>
+            <Modal
+                HeaderIcon="x"
+                modal={modal}
+                setModal={setModal}
+                title="Order Failed"
+                description="Please order at least 1 item"
+                colorButton="green"
+                ButtonIconName="checkmark"
+                TextOnButton="Cancel"
+            />
             <br />
 
             <Container style={{ marginTop: "1em" }}>

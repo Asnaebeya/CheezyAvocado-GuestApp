@@ -31,13 +31,13 @@ const Header = props => {
 
     return (
         <div>
-            <Link to="/">SignIn</Link>
+            {/* <Link to="/">SignIn</Link>
             <Link to="/welcome">Welcome</Link>
             <Link to="/list/food">ItemList</Link>
             <Link to="/order">OrderPage</Link>
             <Link to="/status">OrderStatus</Link>
             <Link to="/bill">Bill</Link>
-            {renderAuthButton()}
+            {renderAuthButton()} */}
         </div>
     );
 };
