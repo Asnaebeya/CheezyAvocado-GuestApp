@@ -33,6 +33,7 @@ const SignIn = props => {
     const onSubmit = formProps => {
         console.log(formProps);
         setModal(true);
+
         // for sign in action
         // props.signin(formProps, () => {
         //     // props.history.push("/welcome");
