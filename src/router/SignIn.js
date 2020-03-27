@@ -6,6 +6,7 @@ import * as actions from "../actions";
 import "./SignIn.css";
 import Modal from "../components/Modal";
 import { Message, Image, Header } from "semantic-ui-react";
+import history from "../history";
 
 const renderError = ({ error, touched }) => {
     if (error && touched) {
@@ -32,7 +33,13 @@ const SignIn = props => {
 
     const onSubmit = formProps => {
         console.log(formProps);
-        setModal(true);
+        // for error
+        // setModal(true);
+
+        //for prototype
+        props.changeAuth("ronaldo");
+        history.push("/welcome");
+
         // for sign in action
         // props.signin(formProps, () => {
         //     // props.history.push("/welcome");
