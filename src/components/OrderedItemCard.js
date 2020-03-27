@@ -80,6 +80,7 @@ const OrderedItemCard = props => {
 
             setModal(true);
         } else {
+            props.updateOrderedItem({ orderedItems: [], type: "" });
             history.push("/status");
         }
 
