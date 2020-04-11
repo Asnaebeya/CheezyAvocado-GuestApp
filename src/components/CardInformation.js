@@ -7,7 +7,7 @@ import {
     Grid,
     Image,
     Card,
-    Icon
+    Icon,
 } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
@@ -15,20 +15,26 @@ const INITIAL_STATE = {
     token: "",
     room: 3,
     FirstName: "Natthadech",
-    LastName: "Bale"
+    LastName: "Bale",
 };
 
-const CardInformation = () => {
+const CardInformation = (props) => {
+    let { firstName, lastName, roomNumber } = props;
+
+    if (!props.firstName || !props.lastName || props.roomNumber) {
+        //INITIAL_STATE.LastName
+    }
+
     return (
         <Container style={{ marginTop: "2em" }}>
             <div>
                 <Header as="h2" attached="top">
-                    {`Hello, ${INITIAL_STATE.LastName}`}
+                    {`Hello, ${lastName}`}
                 </Header>
                 <Segment attached>
-                    {`Name: ${INITIAL_STATE.FirstName} ${INITIAL_STATE.LastName}`}
+                    {`Name: ${firstName} ${lastName}`}
                     <br />
-                    {`Room Number: ${INITIAL_STATE.room}`}
+                    {`Room Number: ${roomNumber}`}
                 </Segment>
             </div>
             <Button

@@ -62,7 +62,7 @@ const RenderStatus = props => {
             return (
                 <MessageWithAnimation
                     title="Your order is accepted!"
-                    loading="20-30 minutes..."
+                    loading="..."
                     animation={props.animation}
                     charSpeed={60}
                 />
@@ -72,7 +72,7 @@ const RenderStatus = props => {
             return (
                 <MessageWithAnimation
                     title="Preparing your order"
-                    loading="15-20 minutes..."
+                    loading="..."
                     animation={props.animation}
                     charSpeed={60}
                 />
@@ -81,7 +81,7 @@ const RenderStatus = props => {
             return (
                 <MessageWithAnimation
                     title="Avocabot is on the way to you!"
-                    loading="5 to 6 minutes..."
+                    loading="..."
                     animation={props.animation}
                     charSpeed={60}
                 />
@@ -137,11 +137,11 @@ export default () => {
     useEffect(() => {
         setInterval(() => {
             setAnimation(prev => !prev);
-        }, 1000000); //1200
+        }, 1200); //1200
 
         let timer = setInterval(() => {
             setStatus(prev => prev + 1);
-        }, 100000); //5000
+        }, 5000); //5000
     }, []);
 
     return (

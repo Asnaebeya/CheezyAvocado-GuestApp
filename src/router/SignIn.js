@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Field, reduxForm } from "redux-form";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -6,6 +6,8 @@ import * as actions from "../actions";
 import "./SignIn.css";
 import Modal from "../components/Modal";
 import { Message, Image, Header } from "semantic-ui-react";
+import Loading from "../components/Loading";
+import history from "../history";
 
 const renderError = ({ error, touched }) => {
     if (error && touched) {
@@ -13,7 +15,7 @@ const renderError = ({ error, touched }) => {
     }
 };
 
-const renderInput = props => {
+const renderInput = (props) => {
     const { input, label, meta, type } = props;
     const className = `field ${meta.error && meta.touched ? "error" : ""}`;
 
@@ -26,26 +28,41 @@ const renderInput = props => {
     );
 };
 
-const SignIn = props => {
+const SignIn = (props) => {
     const { handleSubmit } = props;
-    const [modal, setModal] = useState(false);
 
-    const onSubmit = formProps => {
+    useEffect(() => {
+        let existingToken = window.localStorage.token;
+        if (existingToken) {
+            props.loginRefresh({
+                accessToken: window.localStorage.token,
+                roomNumber: window.localStorage.roomNumber,
+                firstName: window.localStorage.firstName,
+                lastName: window.localStorage.lastName,
+                guestId: window.localStorage.guestId,
+                reservationId: window.localStorage.reservationId,
+            });
+        }
+    }, []);
+
+    const onSubmit = (formProps) => {
         console.log(formProps);
-        setModal(true);
+        // setModal(true);
 
         // for sign in action
-        // props.signin(formProps, () => {
-        //     // props.history.push("/welcome");
-        // });
+        props.signin(formProps, () => {
+            console.log("succeess");
+            history.push("/welcome");
+        });
+
+        // props.signin(formProps);
     };
 
     return (
-        <>
+        <Loading status={props.isLoading} text="Signing in...">
             <Modal
                 HeaderIcon="x"
-                modal={modal}
-                setModal={setModal}
+                modal={props.modalStatus}
                 title="Login Failed"
                 description="Your room number, lastname , or password do not match"
                 colorButton="green"
@@ -55,7 +72,7 @@ const SignIn = props => {
 
             <form
                 className="ui form form-template"
-                onSubmit={handleSubmit(() => onSubmit())}
+                onSubmit={handleSubmit(onSubmit)}
                 style={{ marginBottom: "3em" }}
             >
                 <div>
@@ -66,7 +83,7 @@ const SignIn = props => {
                         as="h3"
                         textAlign="center"
                         style={{
-                            paddingRight: "1vw"
+                            paddingRight: "1vw",
                         }}
                     >
                         Your Delivery Service
@@ -83,7 +100,7 @@ const SignIn = props => {
                     type="number"
                     component={renderInput}
                     label="What's your room number?"
-                    parse={value => parseInt(value, 10)}
+                    parse={(value) => parseInt(value, 10)}
                 />
                 <Field
                     name="lastName"
@@ -98,13 +115,13 @@ const SignIn = props => {
                     label="What's your password?"
                 />
                 <button className="ui button primary">Enter</button>
-                <div>{props.errorMessage}</div>
+                <div>{props.modalStatus ? props.errorMessage : ""}</div>
             </form>
-        </>
+        </Loading>
     );
 };
 
-const validate = formValues => {
+const validate = (formValues) => {
     console.log(formValues);
     const errors = {};
     if (formValues.roomNumber < 1) {
@@ -123,8 +140,13 @@ const validate = formValues => {
     return errors;
 };
 
-const mapStateToProps = state => {
-    return { errorMessage: state.auth.errorMessage };
+const mapStateToProps = (state) => {
+    return {
+        errorMessage: state.auth.errorMessage,
+        isLoading: state.loading.loadingStatus,
+        modalStatus: state.modal.modalStatus,
+        token: state.auth.accessToken,
+    };
 };
 
 export default compose(

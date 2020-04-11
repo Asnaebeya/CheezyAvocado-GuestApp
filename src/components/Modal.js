@@ -1,10 +1,16 @@
 import React from "react";
-import { Modal, Header, Button, Icon } from "semantic-ui-react";
+import {
+    Modal as ComponentModal,
+    Header,
+    Button,
+    Icon
+} from "semantic-ui-react";
+import { showModal } from "../actions";
+import { connect } from "react-redux";
 
-export default props => {
+const Modal = props => {
     let {
         HeaderIcon,
-        setModal,
         modal,
         title,
         description,
@@ -13,20 +19,22 @@ export default props => {
         TextOnButton
     } = props;
     return (
-        <Modal open={modal} size="small" onClose={() => setModal(false)}>
+        <ComponentModal open={modal} size="small" onClose={() => false}>
             <Header icon={HeaderIcon} content={title} />
-            <Modal.Content>
+            <ComponentModal.Content>
                 <p>{description}</p>
-            </Modal.Content>
-            <Modal.Actions>
+            </ComponentModal.Content>
+            <ComponentModal.Actions>
                 <Button
                     color={colorButton}
                     inverted
-                    onClick={() => setModal(false)}
+                    onClick={() => props.showModal(false)}
                 >
                     <Icon name={ButtonIconName} /> {TextOnButton}
                 </Button>
-            </Modal.Actions>
-        </Modal>
+            </ComponentModal.Actions>
+        </ComponentModal>
     );
 };
+
+export default connect(null, { showModal })(Modal);
