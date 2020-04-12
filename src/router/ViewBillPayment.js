@@ -1,71 +1,113 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import * as actions from "../actions";
-import { Container, List, Button } from "semantic-ui-react";
+import { Container, List, Button, Header } from "semantic-ui-react";
 import history from "../history";
 import { Link } from "react-router-dom";
+import api from "../api/api";
+
 const ORDER_HISTORY = [
     {
         id: "0001",
         order: [
             { id: "0001", name: "Fried Chicken", price: 100, amount: 2 },
             { id: "0002", name: "Pizza Hut", price: 20, amount: 1 },
-            { id: "0003", name: "Noodle", price: 150, amount: 1 }
+            { id: "0003", name: "Noodle", price: 150, amount: 1 },
         ],
-        cost: 370
+        cost: 370,
     },
     {
         id: "0002",
         order: [
             { id: "0001", name: "Fried Chicken", price: 100, amount: 1 },
-            { id: "0003", name: "Noodle", price: 150, amount: 1 }
+            { id: "0003", name: "Noodle", price: 150, amount: 1 },
         ],
-        cost: 250
+        cost: 250,
     },
     {
         id: "0003",
         order: [{ id: "0001", name: "Fried Chicken", price: 100, amount: 1 }],
-        cost: 100
+        cost: 100,
     },
     {
         id: "0004",
         order: [
             { id: "0002", name: "Shampoo", price: 0, amount: 1 },
-            { id: "0003", name: "Soap", price: 0, amount: 2 }
+            { id: "0003", name: "Soap", price: 0, amount: 2 },
         ],
-        cost: 0
-    }
+        cost: 0,
+    },
 ];
 
-const ViewBillPayment = () => {
-    const ListofAttribute = orderItem => {
-        return orderItem.map(item => {
+const ViewBillPayment = (props) => {
+    const [totalCost, setTotalCost] = useState(0);
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        let existingToken = window.localStorage.token;
+        if (existingToken) {
+            props.loginRefresh({
+                accessToken: window.localStorage.token,
+                roomNumber: window.localStorage.roomNumber,
+                firstName: window.localStorage.firstName,
+                lastName: window.localStorage.lastName,
+                guestId: window.localStorage.guestId,
+                reservationId: window.localStorage.reservationId,
+            });
+        }
+    }, []);
+
+    const fetchData = async (reservationId) => {
+        setLoading(true);
+        const response = await api.get(
+            `/guest/getBillPayments?reservationID=${reservationId}`
+        );
+        setLoading(false);
+        setTotalCost(response.data.totalAmount);
+        setOrders(response.data.orders);
+        console.log(response.data);
+    };
+
+    useEffect(() => {
+        if (props.reservationId) {
+            fetchData(props.reservationId);
+        }
+    }, [props.reservationId]);
+
+    const ListofAttribute = (orderItem) => {
+        return orderItem.map((item) => {
             return (
-                <List.Content>
-                    {item.name} X{item.amount}
+                <List.Content key={item.foodName}>
+                    {item.foodName} X{item.amount}
                     <span style={{ float: "right" }}>
                         {" "}
-                        {item.amount * item.price}฿{" "}
+                        {/* {item.amount * item.price}฿{" "} */}
                     </span>
                 </List.Content>
             );
         });
     };
     const ShowList = () => {
-        return ORDER_HISTORY.map(order => {
+        return orders.map((order) => {
             return (
-                <List.Item key={order.id} className="ui segment item">
-                    <List.Header as={"h3"}>Order: {order.id}</List.Header>
-                    {ListofAttribute(order.order)}
+                <List.Item key={order.orderID} className="ui segment item">
+                    <Header as={"h3"}>
+                        Order: {order.orderID}
+                        <Header.Subheader>
+                            Time: {order.timestamp}
+                        </Header.Subheader>
+                    </Header>
+                    {ListofAttribute(order.orders)}
                     <List.Content
                         style={{
                             paddingBottom: "2em",
                             paddingTop: "0.15em",
-                            borderTop: `1px solid rgba(100,100, 100) `
+                            borderTop: `1px solid rgba(100,100, 100) `,
                         }}
                     >
                         <span style={{ float: "right", marginButton: "5em" }}>
-                            Cost: {order.cost}฿
+                            Cost: {order.totalCost}฿
                         </span>
                     </List.Content>
                 </List.Item>
@@ -93,17 +135,31 @@ const ViewBillPayment = () => {
                 />
                 <br />
                 <br />
+                {loading ? <p>fetching data...</p> : <p></p>}
 
-                {ShowList()}
+                {orders ? ShowList() : <div></div>}
                 <div style={{ float: "right", marginRight: "1em" }}>
-                    Total Cost: {calculateCost()}฿
+                    Total Cost: {totalCost}฿
                 </div>
             </Container>
         </div>
     );
 };
 
-export default ViewBillPayment;
+const mapStateToProps = (state) => {
+    return {
+        isLoading: state.loading.loadingStatus,
+        modalStatus: state.modal.modalStatus,
+        token: state.auth.accessToken,
+        roomNumber: state.auth.roomNumber,
+        firstName: state.auth.firstName,
+        lastName: state.auth.lastName,
+        guestId: state.auth.guestId,
+        reservationId: state.auth.reservationId,
+    };
+};
+
+export default connect(mapStateToProps, actions)(ViewBillPayment);
 
 // <List.Item className="ui segment item">
 // <List.Header>{key}</List.Header>

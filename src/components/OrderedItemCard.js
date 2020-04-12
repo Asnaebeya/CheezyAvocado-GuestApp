@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Item, Container, Header, Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { updateOrderedItem } from "../actions";
+import { updateOrderedItem, showModal } from "../actions";
 import history from "../history";
 import RenderCardList from "./RenderCardList";
 import "./OrderItemCard.css";
@@ -10,20 +10,19 @@ import Modal from "./Modal";
 
 // ORDERED LIST OF FOOD OR AMENITIES
 
-const OrderedItemCard = props => {
+const OrderedItemCard = (props) => {
     console.log(props);
     const [foods, setFoods] = useState(props.currentOrder);
-    const [modal, setModal] = useState(false);
 
     useEffect(() => {
         calculateCost();
     }, []);
 
     useEffect(() => {
-        let orderedFoods = foods.filter(food => food.amount > 0);
+        let orderedFoods = foods.filter((food) => food.amount > 0);
         props.updateOrderedItem({
             orderedItems: orderedFoods,
-            type: props.type
+            type: props.type,
         });
     }, [foods]);
 
@@ -36,33 +35,33 @@ const OrderedItemCard = props => {
         return cost;
     };
 
-    const increaseHandle = id => {
-        const foodIndex = foods.findIndex(obj => obj.id === id);
+    const increaseHandle = (id) => {
+        const foodIndex = foods.findIndex((obj) => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
-            amount: foods[foodIndex].amount + 1
+            amount: foods[foodIndex].amount + 1,
         };
         setFoods([
             ...foods.slice(0, foodIndex),
             updateObject,
-            ...foods.slice(foodIndex + 1)
+            ...foods.slice(foodIndex + 1),
         ]);
 
         return;
     };
 
-    const decreaseHandle = id => {
-        const foodIndex = foods.findIndex(obj => obj.id === id);
+    const decreaseHandle = (id) => {
+        const foodIndex = foods.findIndex((obj) => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
             amount:
-                foods[foodIndex].amount === 0 ? 0 : foods[foodIndex].amount - 1
+                foods[foodIndex].amount === 0 ? 0 : foods[foodIndex].amount - 1,
         };
 
         setFoods([
             ...foods.slice(0, foodIndex),
             updateObject,
-            ...foods.slice(foodIndex + 1)
+            ...foods.slice(foodIndex + 1),
         ]);
 
         return;
@@ -74,10 +73,8 @@ const OrderedItemCard = props => {
             props.currentOrder === undefined ||
             props.currentOrder.length === 0
         ) {
-            console.log("send request to server in if");
             // array empty or does not exist
-
-            setModal(true);
+            props.showModal(true);
         } else {
             // props.updateOrderedItem({ orderedItems: [], type: "" });
             // history.push("/status");
@@ -91,7 +88,7 @@ const OrderedItemCard = props => {
 
     return (
         <div>
-            <Modal
+            {/* <Modal
                 HeaderIcon="x"
                 modal={modal}
                 setModal={setModal}
@@ -100,7 +97,17 @@ const OrderedItemCard = props => {
                 colorButton="green"
                 ButtonIconName="checkmark"
                 TextOnButton="Cancel"
+            /> */}
+            <Modal
+                HeaderIcon="x"
+                modal={props.modalStatus}
+                title="Order Failed"
+                description="Please order at least 1 item"
+                colorButton="green"
+                ButtonIconName="checkmark"
+                TextOnButton="Cancel"
             />
+
             <br />
 
             <Container style={{ marginTop: "1em" }}>
@@ -134,14 +141,17 @@ const OrderedItemCard = props => {
     );
 };
 
-const mapStatetoProps = state => {
+const mapStatetoProps = (state) => {
     return {
         currentOrder: state.order.currentOrder.orderedItems,
-        type: state.order.currentOrder.type
+        type: state.order.currentOrder.type,
+        modalStatus: state.modal.modalStatus,
     };
 };
 
-export default connect(mapStatetoProps, { updateOrderedItem })(OrderedItemCard);
+export default connect(mapStatetoProps, { updateOrderedItem, showModal })(
+    OrderedItemCard
+);
 
 // const ConfirmOrderClickHandler = () => {
 //     // let orderedFoods = foods.filter(food => food.amount > 0);

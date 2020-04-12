@@ -36,20 +36,20 @@ export const signin = (formProps, callback) => async (dispatch) => {
             dispatch(showModal(true));
             dispatch({
                 type: actionTypes.AUTH_ERROR,
-                payload: {
-                    accessToken: response.data.accessToken,
-                    firstName: response.data.guestFirstName,
-                    lastName: response.data.guestLastName,
-                    roomNumber: response.data.roomNumber,
-                    guestId: response.data.guestID,
-                    reservationId: response.data.reservationID,
-                },
+                payload: response.data,
             });
             return;
         }
         dispatch({
             type: actionTypes.AUTH_USER,
-            payload: response.data,
+            payload: {
+                accessToken: response.data.accessToken,
+                firstName: response.data.guestFirstName,
+                lastName: response.data.guestLastName,
+                roomNumber: response.data.roomNumber,
+                guestId: response.data.guestID,
+                reservationId: response.data.reservationID,
+            },
         });
         dispatch(loading(false));
 

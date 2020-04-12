@@ -6,132 +6,178 @@ import {
     Item,
     Header,
     Placeholder,
-    Container
+    Container,
+    Dropdown,
 } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { updateOrderedItem } from "../actions";
+import { updateOrderedItem, loginRefresh } from "../actions";
+import api from "../api/api";
 import history from "../history";
 import RenderCardList from "./RenderCardList";
 import "./OrderItemCard.css";
 
 // LIST OF ITEMS LIKE FOOD AND AMENITIES
 
-
 //         {"foodID": "0001",
 //         "foodName": "Prawn Pad Thai",
 //         "price": 150,
 //         "foodImage": "url1"
 // }
-
-const INITIAL_STATE = {
-    foods: [
-        {
-            foodID: "0001",
-            foodName: "Fried Chicken",
-            price: 100,
-            description: "This is a plate with 3 fried chicken nuggets",
-
-            foodImage:
-                "https://2rdnmg1qbg403gumla1v9i2h-wpengine.netdna-ssl.com/wp-content/uploads/sites/3/2019/10/vitaminDfood-1132105308-770x553-650x428.jpg"
-        },
-        {
-            foodID: "0002",
-            foodName: "Pizza Hut",
-            price: 20,
-            description: "I like to eat banana with pizza",
-
-            foodImage:
-                "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/20190503-delish-pineapple-baked-salmon-horizontal-ehg-450-1557771120.jpg?crop=0.669xw:1.00xh;0.173xw,0&resize=640:*"
-        },
-        {
-            foodID: "0003",
-            foodName: "Noodle",
-            price: 150,
-            description: "Better than apples",
-
-            foodImage:
-                "https://i0.wp.com/cdn-prod.medicalnewstoday.com/content/images/articles/322/322284/berries-are-good-food-for-high-blood-pressure.jpg?w=1155&h=1541"
-        }
-        // ,
-        // {
-        //     foodID: "0004",
-        //     foodName: "French Fries",
-        //     price: 40,
-        //     description: "Burger King is my ronaldoo",
-
-        //     foodImage:
-        //         "https://images2.minutemediacdn.com/image/upload/c_crop,h_1126,w_2000,x_0,y_181/f_auto,q_auto,w_1100/v1554932288/shape/mentalfloss/12531-istock-637790866.jpg"
-        // }
-    ]
-};
-
-const amenities = [
+const foodSortOptions = [
     {
-        amenityID: "0001",
-        amenityName: "Towel",
-        amenityIcon: "https://image.flaticon.com/icons/svg/1986/1986380.svg",
-        description: "Fluffy like cotton"
+        key: "Default",
+        text: "Default",
+        value: "",
     },
     {
-        amenityID: "0002",
-        amenityName: "Shampoo",
-        amenityIcon: "https://image.flaticon.com/icons/svg/1848/1848354.svg",
-        description: "Anti Dandruff included"
+        key: "Name",
+        text: "Sort by Name",
+        value: "foodName",
     },
     {
-        amenityID: "0003",
-        amenityName: "Soap",
-        amenityIcon: "https://image.flaticon.com/icons/svg/2707/2707432.svg",
-        description: "Peach smell"
-    }
-    // ,
-    // {
-    //     amenityID: "0004",
-    //     amenityName: "Toothbrush",
-    //     amenityIcon: "https://image.flaticon.com/icons/svg/458/458153.svg",
-    //     description: "Batman is like superman"
-    // }
+        key: "Price",
+        text: "Sort by Price",
+        value: "foodPrice",
+    },
 ];
 
-const ItemCard = props => {
+const amenitySortOptions = [
+    {
+        key: "Default",
+        text: "Default",
+        value: "",
+    },
+    {
+        key: "Name",
+        text: "Sort by Name",
+        value: "amenityName",
+    },
+];
+
+const ItemCard = (props) => {
     console.log(props);
 
-    const initialState = () => {
-        if (props.type === "food") {
-            let usableFoods = INITIAL_STATE.foods.map(obj => {
-                return {
-                    id: obj.foodID,
-                    name: obj.foodName,
-                    price: obj.price,
-                    description: obj.description,
-                    image: obj.foodImage,
-                    amount: 0
-                };
-            });
-            return usableFoods;
-        } else if (props.type === "amenity") {
-            let usableAmenities = amenities.map(obj => {
-                return {
-                    id: obj.amenityID,
-                    name: obj.amenityName,
-                    description: obj.description,
-                    image: obj.amenityIcon,
-                    amount: 0
-                };
-            });
-            return usableAmenities;
-        }
-    };
-    const [foods, setFoods] = useState(initialState());
+    const [foods, setFoods] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [sortBy, setSortBy] = useState("");
 
+    // need to fix this
     useEffect(() => {
-        let IdOfCurrentOrder = props.currentOrder.map(food => food.id);
+        let IdOfCurrentOrder = props.currentOrder.map((food) => food.id);
         let notContainingArray = foods.filter(
-            food => !IdOfCurrentOrder.includes(food.id)
+            (food) => !IdOfCurrentOrder.includes(food.id)
         );
         setFoods([...props.currentOrder, ...notContainingArray]);
         calculateCost();
     }, []);
+
+    useEffect(() => {
+        let existingToken = window.localStorage.token;
+        if (existingToken) {
+            props.loginRefresh({
+                accessToken: window.localStorage.token,
+                roomNumber: window.localStorage.roomNumber,
+                firstName: window.localStorage.firstName,
+                lastName: window.localStorage.lastName,
+                guestId: window.localStorage.guestId,
+                reservationId: window.localStorage.reservationId,
+            });
+        }
+    }, []);
+
+    const getItems = async (type) => {
+        if (props.token) {
+            setLoading(true);
+            let response;
+
+            const helperSetFoods = (response) => {
+                let usableFoods = response.data.map((obj) => {
+                    return {
+                        id: obj.foodID,
+                        name: obj.foodName,
+                        price: obj.price,
+                        description: obj.foodDescription,
+                        image: obj.foodImage,
+                        amount: 0,
+                    };
+                });
+                setLoading(false);
+                console.log(usableFoods);
+                setFoods(usableFoods);
+            };
+
+            const helperSetAmenities = (response) => {
+                let usableAmenities = response.data.map((obj) => {
+                    return {
+                        id: obj.amenityID,
+                        name: obj.amenityName,
+                        description: obj.amenityDescription,
+                        image: obj.amenityIcon,
+                        amount: 0,
+                    };
+                });
+                setLoading(false);
+                console.log(usableAmenities);
+                setFoods(usableAmenities);
+            };
+
+            if (type === "food") {
+                if (sortBy === "foodPrice") {
+                    response = await api.get("/guest/getFoodsByPrice", {
+                        headers: {
+                            Authorization: `bearer ${props.token}`,
+                        },
+                    });
+                    helperSetFoods(response);
+                } else if (sortBy === "foodName") {
+                    response = await api.get("/guest/getFoodsByName", {
+                        headers: {
+                            Authorization: `bearer ${props.token}`,
+                        },
+                    });
+                    helperSetFoods(response);
+                } else {
+                    response = await api.get("/guest/getFoods", {
+                        headers: {
+                            Authorization: `bearer ${props.token}`,
+                        },
+                    });
+                    helperSetFoods(response);
+                }
+            } else {
+                if (sortBy === "amenityName") {
+                    response = await api.get("/guest/getAmenitiesByName", {
+                        headers: {
+                            Authorization: `bearer ${props.token}`,
+                        },
+                    });
+                    helperSetAmenities(response);
+                } else {
+                    response = await api.get("/guest/getAmenities", {
+                        headers: {
+                            Authorization: `bearer ${props.token}`,
+                        },
+                    });
+                    helperSetAmenities(response);
+                }
+            }
+
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        getItems(props.type);
+    }, [props.token, sortBy]);
+
+    // useEffect(() => {
+    //     let IdOfCurrentOrder = props.currentOrder.map((food) => food.id);
+    //     let notContainingArray = foods.filter(
+    //         (food) => !IdOfCurrentOrder.includes(food.id)
+    //     );
+    //     setFoods([...props.currentOrder, ...notContainingArray]);
+    //     calculateCost();
+    // }, [props.currentOrder, props.token]);
 
     const calculateCost = () => {
         let cost = foods.reduce((prev, cur) => {
@@ -141,39 +187,39 @@ const ItemCard = props => {
         return cost;
     };
 
-    const increaseHandle = id => {
-        const foodIndex = foods.findIndex(obj => obj.id === id);
+    const increaseHandle = (id) => {
+        const foodIndex = foods.findIndex((obj) => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
-            amount: foods[foodIndex].amount + 1
+            amount: foods[foodIndex].amount + 1,
         };
         setFoods([
             ...foods.slice(0, foodIndex),
             updateObject,
-            ...foods.slice(foodIndex + 1)
+            ...foods.slice(foodIndex + 1),
         ]);
         return;
     };
 
-    const decreaseHandle = id => {
-        const foodIndex = foods.findIndex(obj => obj.id === id);
+    const decreaseHandle = (id) => {
+        const foodIndex = foods.findIndex((obj) => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
             amount:
-                foods[foodIndex].amount === 0 ? 0 : foods[foodIndex].amount - 1
+                foods[foodIndex].amount === 0 ? 0 : foods[foodIndex].amount - 1,
         };
 
         setFoods([
             ...foods.slice(0, foodIndex),
             updateObject,
-            ...foods.slice(foodIndex + 1)
+            ...foods.slice(foodIndex + 1),
         ]);
 
         return;
     };
 
     const orderClickHandler = () => {
-        let orderedFoods = foods.filter(food => food.amount > 0);
+        let orderedFoods = foods.filter((food) => food.amount > 0);
         console.log({ orderedItems: orderedFoods, type: props.type });
         let payload = { orderedItems: orderedFoods, type: props.type };
         props.updateOrderedItem(payload);
@@ -196,8 +242,35 @@ const ItemCard = props => {
         return;
     };
 
+    useEffect(() => {
+        console.log(sortBy);
+    }, [sortBy]);
+
+    const handleSortByChange = (e, { value }) => {
+        setSortBy({ value }.value);
+    };
+
     return (
         <Container style={{ marginTop: "1em" }}>
+            {loading ? <p>fetching data...</p> : <div></div>}
+
+            {props.type === "food" ? (
+                <Dropdown
+                    placeholder="Sort by"
+                    fluid
+                    selection
+                    options={foodSortOptions}
+                    onChange={handleSortByChange}
+                />
+            ) : (
+                <Dropdown
+                    placeholder="Sort by"
+                    fluid
+                    selection
+                    options={amenitySortOptions}
+                    onChange={handleSortByChange}
+                />
+            )}
             <Item.Group unstackable={true}>
                 <RenderCardList
                     foods={foods}
@@ -220,13 +293,18 @@ const ItemCard = props => {
     );
 };
 
-const mapStatetoProps = state => {
+const mapStatetoProps = (state) => {
     return {
-        currentOrder: state.order.currentOrder.orderedItems
+        currentOrder: state.order.currentOrder.orderedItems,
+        token: state.auth.accessToken,
+        guestId: state.auth.guestId,
+        reservationId: state.auth.reservationId,
     };
 };
 
-export default connect(mapStatetoProps, { updateOrderedItem })(ItemCard);
+export default connect(mapStatetoProps, { updateOrderedItem, loginRefresh })(
+    ItemCard
+);
 
 // return (
 //     <Item>
@@ -263,3 +341,30 @@ export default connect(mapStatetoProps, { updateOrderedItem })(ItemCard);
 //         </Item.Content>
 //     </Item>
 // );
+
+// const initialState = () => {
+//     if (props.type === "food") {
+//         let usableFoods = INITIAL_STATE.foods.map((obj) => {
+//             return {
+//                 id: obj.foodID,
+//                 name: obj.foodName,
+//                 price: obj.price,
+//                 description: obj.foodDescription,
+//                 image: obj.foodImage,
+//                 amount: 0,
+//             };
+//         });
+//         return usableFoods;
+//     } else if (props.type === "amenity") {
+//         let usableAmenities = amenities.map((obj) => {
+//             return {
+//                 id: obj.amenityID,
+//                 name: obj.amenityName,
+//                 description: obj.amenityDescription,
+//                 image: obj.amenityIcon,
+//                 amount: 0,
+//             };
+//         });
+//         return usableAmenities;
+//     }
+// };

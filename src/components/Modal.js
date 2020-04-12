@@ -3,12 +3,12 @@ import {
     Modal as ComponentModal,
     Header,
     Button,
-    Icon
+    Icon,
 } from "semantic-ui-react";
 import { showModal } from "../actions";
 import { connect } from "react-redux";
 
-const Modal = props => {
+const Modal = (props) => {
     let {
         HeaderIcon,
         modal,
@@ -16,10 +16,14 @@ const Modal = props => {
         description,
         colorButton,
         ButtonIconName,
-        TextOnButton
+        TextOnButton,
     } = props;
     return (
-        <ComponentModal open={modal} size="small" onClose={() => false}>
+        <ComponentModal
+            open={modal}
+            size="small"
+            onClose={() => props.showModal(false)}
+        >
             <Header icon={HeaderIcon} content={title} />
             <ComponentModal.Content>
                 <p>{description}</p>
