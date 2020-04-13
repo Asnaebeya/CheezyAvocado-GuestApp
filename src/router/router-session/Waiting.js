@@ -10,8 +10,8 @@ import history from "../../history";
 
 const mqtt = require("mqtt");
 var options = {
-    port: 17267,
-    host: "mqtt://soldier.cloudmqtt.com",
+    port: 37267,
+    host: "wss://soldier.cloudmqtt.com",
     clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8),
     username: "vfmquhui",
     password: "yXMUCDc8eoO8",
@@ -22,8 +22,11 @@ var options = {
     clean: true,
     encoding: "utf8",
 };
-const client = mqtt.connect("mqtt://soldier.cloudmqtt.com", options);
+
+const client = mqtt.connect("wss://soldier.cloudmqtt.com", options);
 client.subscribe("orderStatus");
+client.subscribe("lockerIsOpen");
+client.subscribe("lockerIsClosed");
 
 const statusArr = [
     "Wait",
@@ -33,6 +36,19 @@ const statusArr = [
     "Arrived",
     "End",
 ];
+
+const charPosesDefaults = {
+    exit: {
+        y: 3,
+        opacity: 0,
+        delay: ({ charIndex }) => charIndex * 60,
+    },
+    enter: {
+        y: 0,
+        opacity: 1,
+        delay: ({ charIndex }) => charIndex * 60,
+    },
+};
 
 const trueCenterText = { paddingRight: "5vw" };
 
@@ -69,7 +85,7 @@ const MessageWithAnimation = (props) => {
 };
 
 const RenderStatus = (props) => {
-    let status = props.status;
+    let { status } = props;
     switch (status) {
         case "Waiting":
             return (
@@ -88,26 +104,17 @@ const RenderStatus = (props) => {
                     </Button>
                 </div>
             );
-        case "Accepted":
+        case "approved":
             return (
                 <MessageWithAnimation
-                    title="Your order is accepted!"
+                    title="Your order is accepted! "
                     loading="..."
                     animation={props.animation}
                     charSpeed={60}
                 />
             );
 
-        case "Preparing":
-            return (
-                <MessageWithAnimation
-                    title="Preparing your order"
-                    loading="..."
-                    animation={props.animation}
-                    charSpeed={60}
-                />
-            );
-        case "OntheWay":
+        case "on the way":
             return (
                 <MessageWithAnimation
                     title="Avocabot is on the way to you!"
@@ -117,7 +124,7 @@ const RenderStatus = (props) => {
                 />
             );
 
-        case "Arrived":
+        case "arrived":
             return (
                 <>
                     <Header as="h2" icon textAlign="center">
@@ -127,17 +134,31 @@ const RenderStatus = (props) => {
                                 Please pick up at the door
                             </Header.Subheader>
                         </Header.Content>
+                        {props.showButton === 2 && (
+                            <Header.Content
+                                as={SplitText}
+                                initialPose="exit"
+                                pose={props.animation ? "enter" : "exit"}
+                                charPoses={charPosesDefaults}
+                            >
+                                ...
+                            </Header.Content>
+                        )}
                     </Header>
-                    <Button
-                        onClick={() => props.setOpenAvocabot((prev) => !prev)}
-                    >
-                        {props.openAvocabot === false
-                            ? "Open Avocabot"
-                            : "Return Avocabot"}
-                    </Button>
+
+                    {props.showButton === 1 && (
+                        <Button onClick={() => props.openAvocabot()}>
+                            Open Avocabot
+                        </Button>
+                    )}
+                    {props.showButton === 3 && (
+                        <Button onClick={() => props.closeAvocabot()}>
+                            Close Avocabot
+                        </Button>
+                    )}
                 </>
             );
-        case "End":
+        case "end":
             return (
                 <>
                     <Header as="h2" icon textAlign="center">
@@ -145,13 +166,27 @@ const RenderStatus = (props) => {
                             Thank you!
                         </Header.Content>
                     </Header>
-                    <Button style={{ marginRight: "5vw" }}>
+                    <Button
+                        style={{ marginRight: "5vw" }}
+                        onClick={() => {
+                            props.setPageStatus("");
+                            history.push("/bill");
+                        }}
+                    >
                         View Bill Payment
                     </Button>
                     <br />
                     <br />
 
-                    <Button style={{ marginRight: "5vw" }}>Home</Button>
+                    <Button
+                        style={{ marginRight: "5vw" }}
+                        onClick={() => {
+                            props.setPageStatus("");
+                            history.push("/welcome");
+                        }}
+                    >
+                        Home
+                    </Button>
                 </>
             );
         default:
@@ -161,14 +196,31 @@ const RenderStatus = (props) => {
 
 const Waiting = (props) => {
     const [animation, setAnimation] = useState(false);
-    const [openAvocabot, setOpenAvocabot] = useState(false);
-    const [mesg, setMesg] = useState("");
+    const { pageStatus } = props;
+    const [showButton, setShowButton] = useState(1);
 
     client.on("message", (topic, message) => {
         var note;
         if (topic === "orderStatus") {
             note = message.toString();
             console.log(note);
+            if (note === "approved") {
+                props.setPageStatus(note);
+            }
+            if (note === "on the way") {
+                props.setPageStatus(note);
+            }
+            if (note === "arrived") {
+                props.setPageStatus(note);
+            }
+        }
+
+        if (topic === "lockerIsOpen" && pageStatus === "arrived") {
+            setShowButton(3);
+        }
+        if (topic === "lockerIsClosed" && pageStatus === "arrived") {
+            props.showLoading(false);
+            props.setPageStatus("end");
         }
     });
 
@@ -176,11 +228,9 @@ const Waiting = (props) => {
         setInterval(() => {
             setAnimation((prev) => !prev);
         }, 1200); //1200
-
-        // let timer = setInterval(() => {
-        //     setStatus(prev => prev + 1);
-        // }, 5000); //5000
     }, []);
+
+    useEffect(() => {}, [pageStatus]);
 
     const cancelOrder = async (orderId) => {
         props.showLoading(true);
@@ -193,8 +243,27 @@ const Waiting = (props) => {
         }
     };
 
+    const openAvocabot = async () => {
+        props.showLoading(true);
+        // const response = await api.get(`/guest/openLocker`);
+
+        const response = await setTimeout(() => {
+            return 10;
+        }, 2000);
+        props.showLoading(false);
+        setShowButton(2);
+    };
+
+    const closeAvocabot = async () => {
+        props.showLoading(true);
+        // const response = await api.get(`/guest/returnRobot`);
+        const response = await setTimeout(() => {
+            return 10;
+        }, 2000);
+    };
+
     return (
-        <Loading status={props.isLoading} text="Signing in...">
+        <Loading status={props.isLoading} text="Loading...">
             <Image
                 src="/cheezyAvocado2.png"
                 size="medium"
@@ -205,9 +274,11 @@ const Waiting = (props) => {
                 status={props.pageStatus}
                 animation={animation}
                 openAvocabot={openAvocabot}
+                closeAvocabot={closeAvocabot}
                 orderId={props.orderId}
-                setOpenAvocabot={setOpenAvocabot}
                 cancelOrder={cancelOrder}
+                showButton={showButton}
+                setPageStatus={props.setPageStatus}
             />
         </Loading>
     );
