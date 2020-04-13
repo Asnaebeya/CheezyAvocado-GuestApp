@@ -11,11 +11,19 @@ import axios from "axios";
 //     }
 // };
 
+export const setPageStatus = (orderStatus) => {
+    return { type: actionTypes.SET_ORDER_STATUS, payload: orderStatus };
+};
+
+export const setOrderId = (orderId) => {
+    return { type: actionTypes.SET_ORDER_ID, payload: orderId };
+};
+
 export const showModal = (ModalStatus) => {
     return { type: actionTypes.SHOW_MODAL, payload: ModalStatus };
 };
 
-const loading = (loadingStatus) => {
+export const showLoading = (loadingStatus) => {
     return { type: actionTypes.LOADING, payload: loadingStatus };
 };
 
@@ -28,11 +36,11 @@ export const loginRefresh = (userData) => {
 
 export const signin = (formProps, callback) => async (dispatch) => {
     try {
-        dispatch(loading(true));
+        dispatch(showLoading(true));
         const response = await api.post("/authen/guest", formProps);
 
         if (response.data === "Incorrect data") {
-            dispatch(loading(false));
+            dispatch(showLoading(false));
             dispatch(showModal(true));
             dispatch({
                 type: actionTypes.AUTH_ERROR,
@@ -51,7 +59,7 @@ export const signin = (formProps, callback) => async (dispatch) => {
                 reservationId: response.data.reservationID,
             },
         });
-        dispatch(loading(false));
+        dispatch(showLoading(false));
 
         localStorage.setItem("token", response.data.accessToken);
         localStorage.setItem("firstName", response.data.guestFirstName);

@@ -6,12 +6,10 @@ const Loading = (props) => {
 
     return (
         <div>
-            <Segment>
-                <Dimmer active={props.status}>
-                    <Loader>{props.text}</Loader>
-                </Dimmer>
-                {children}
-            </Segment>
+            <Dimmer active={props.status}>
+                <Loader>{props.text}</Loader>
+            </Dimmer>
+            {children}
         </div>
     );
 };

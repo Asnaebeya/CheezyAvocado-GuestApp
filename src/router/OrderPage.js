@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import OrderedItemCard from "../components/OrderedItemCard";
 import { Header, Icon, Button } from "semantic-ui-react";
 import { connect } from "react-redux";
 import _ from "lodash";
 import history from "../history";
+import Loading from "../components/Loading";
 
-const OrderPage = props => {
+const OrderPage = (props) => {
+    useEffect(() => {
+        if (props.type === "") {
+            history.push("/welcome");
+        }
+    }, []);
+
     const renderHeader = () => {
         if (props.type === "food") {
             return (
@@ -33,7 +40,7 @@ const OrderPage = props => {
         }
     };
     return (
-        <div>
+        <Loading status={props.isLoading} text="Loading...">
             <Button
                 style={{ margin: "0 2em 0 0" }}
                 circular
@@ -43,12 +50,13 @@ const OrderPage = props => {
             />
             {renderHeader()}
             <OrderedItemCard />
-        </div>
+        </Loading>
     );
 };
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
-        type: state.order.currentOrder.type
+        type: state.order.currentOrder.type,
+        isLoading: state.loading.loadingStatus,
     };
 };
 

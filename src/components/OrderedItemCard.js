@@ -1,18 +1,60 @@
 import React, { useState, useEffect } from "react";
 import { Button, Item, Container, Header, Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { updateOrderedItem, showModal } from "../actions";
+import {
+    updateOrderedItem,
+    showModal,
+    loginRefresh,
+    showLoading,
+    setOrderId,
+    setPageStatus,
+} from "../actions";
 import history from "../history";
 import RenderCardList from "./RenderCardList";
 import "./OrderItemCard.css";
 import _ from "lodash";
 import Modal from "./Modal";
+import api from "../api/api";
 
 // ORDERED LIST OF FOOD OR AMENITIES
+
+// {
+//     "department": "food",
+//     "reservationID": "00000002",
+//     "roomNumber":"102",
+//     "order": [
+//      {
+//       "id":"0001",
+//       "amount":"1",
+//       "price":"170"
+//      },
+//      {
+//       "id":"0004",
+//       "amount":"2",
+//       "price": "70"
+//      }
+//     ],
+//     "totalCost" : "310"
+//    }
 
 const OrderedItemCard = (props) => {
     console.log(props);
     const [foods, setFoods] = useState(props.currentOrder);
+    const [totalCost, setTotalCost] = useState(0);
+
+    useEffect(() => {
+        let existingToken = window.localStorage.token;
+        if (existingToken) {
+            props.loginRefresh({
+                accessToken: window.localStorage.token,
+                roomNumber: window.localStorage.roomNumber,
+                firstName: window.localStorage.firstName,
+                lastName: window.localStorage.lastName,
+                guestId: window.localStorage.guestId,
+                reservationId: window.localStorage.reservationId,
+            });
+        }
+    }, []);
 
     useEffect(() => {
         calculateCost();
@@ -24,6 +66,7 @@ const OrderedItemCard = (props) => {
             orderedItems: orderedFoods,
             type: props.type,
         });
+        calculateCost();
     }, [foods]);
 
     const calculateCost = () => {
@@ -32,7 +75,7 @@ const OrderedItemCard = (props) => {
         }, 0);
 
         console.log("cost:", cost);
-        return cost;
+        setTotalCost(cost);
     };
 
     const increaseHandle = (id) => {
@@ -78,12 +121,56 @@ const OrderedItemCard = (props) => {
         } else {
             // props.updateOrderedItem({ orderedItems: [], type: "" });
             // history.push("/status");
+
+            let data;
+
+            if (props.type === "food") {
+                let modifiedOrdersFood = props.currentOrder.map((order) => {
+                    return {
+                        id: order.id,
+                        amount: order.amount,
+                        price: order.price,
+                    };
+                });
+                data = {
+                    department: props.type,
+                    reservationID: props.reservationId,
+                    roomNumber: props.roomNumber,
+                    order: modifiedOrdersFood,
+                    totalCost: totalCost,
+                };
+            } else {
+                let modifiedOrdersAmenity = props.currentOrder.map((order) => {
+                    return {
+                        id: order.id,
+                        amount: order.amount,
+                    };
+                });
+                data = {
+                    department: props.type,
+                    reservationID: props.reservationId,
+                    roomNumber: props.roomNumber,
+                    order: modifiedOrdersAmenity,
+                };
+            }
+
+            postOrder(data);
+
             console.log("send request to server ");
         }
-
         // update history
         // props.updateOrderedItem(orderedFoods);
         // history.push("/status");
+    };
+
+    const postOrder = async (data) => {
+        props.showLoading(true);
+        const response = await api.post("/guest/placeOrder", data);
+        props.showLoading(false);
+        console.log(response.data.orderID);
+        props.setOrderId(response.data.orderID);
+        props.setPageStatus("Waiting");
+        history.push("/status");
     };
 
     return (
@@ -123,7 +210,7 @@ const OrderedItemCard = (props) => {
                     {props.type === "food" ? (
                         <div>
                             <Header sub>Price</Header>
-                            <span>{calculateCost()}฿</span>
+                            <span>{totalCost}฿</span>
                         </div>
                     ) : (
                         <span></span>
@@ -145,13 +232,24 @@ const mapStatetoProps = (state) => {
     return {
         currentOrder: state.order.currentOrder.orderedItems,
         type: state.order.currentOrder.type,
+
+        isLoading: state.loading.loadingStatus,
         modalStatus: state.modal.modalStatus,
+        token: state.auth.accessToken,
+        roomNumber: state.auth.roomNumber,
+        guestId: state.auth.guestId,
+        reservationId: state.auth.reservationId,
     };
 };
 
-export default connect(mapStatetoProps, { updateOrderedItem, showModal })(
-    OrderedItemCard
-);
+export default connect(mapStatetoProps, {
+    updateOrderedItem,
+    showModal,
+    loginRefresh,
+    showLoading,
+    setOrderId,
+    setPageStatus,
+})(OrderedItemCard);
 
 // const ConfirmOrderClickHandler = () => {
 //     // let orderedFoods = foods.filter(food => food.amount > 0);

@@ -4,11 +4,13 @@ import { reducer as formReducer } from "redux-form";
 import orderReducer from "./orderReducer";
 import loadingReducer from "./loadingReducer";
 import modalReducer from "./modalReducer";
+import pageStatusReducer from "./pageStatusReducer";
 
 export default combineReducers({
     auth: authReducer,
     form: formReducer,
     order: orderReducer,
     loading: loadingReducer,
-    modal: modalReducer
+    modal: modalReducer,
+    status: pageStatusReducer,
 });

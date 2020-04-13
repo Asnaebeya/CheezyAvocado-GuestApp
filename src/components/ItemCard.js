@@ -62,14 +62,15 @@ const ItemCard = (props) => {
     const [sortBy, setSortBy] = useState("");
 
     // need to fix this
-    useEffect(() => {
-        let IdOfCurrentOrder = props.currentOrder.map((food) => food.id);
-        let notContainingArray = foods.filter(
-            (food) => !IdOfCurrentOrder.includes(food.id)
-        );
-        setFoods([...props.currentOrder, ...notContainingArray]);
-        calculateCost();
-    }, []);
+    
+    // useEffect(() => {
+    //     let IdOfCurrentOrder = props.currentOrder.map((food) => food.id);
+    //     let notContainingArray = foods.filter(
+    //         (food) => !IdOfCurrentOrder.includes(food.id)
+    //     );
+    //     setFoods([...props.currentOrder, ...notContainingArray]);
+    //     calculateCost();
+    // }, []);
 
     useEffect(() => {
         let existingToken = window.localStorage.token;

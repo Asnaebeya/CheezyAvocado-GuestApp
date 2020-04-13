@@ -82,7 +82,7 @@ const ViewBillPayment = (props) => {
                     {item.foodName} X{item.amount}
                     <span style={{ float: "right" }}>
                         {" "}
-                        {/* {item.amount * item.price}฿{" "} */}
+                        {item.amount * item.price}฿{" "}
                     </span>
                 </List.Content>
             );

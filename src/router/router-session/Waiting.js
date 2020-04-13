@@ -2,6 +2,28 @@ import React, { useState, useEffect } from "react";
 import { Image, Header, Button } from "semantic-ui-react";
 import posed from "react-pose";
 import SplitText from "react-pose-text";
+import api from "../../api/api";
+import { connect } from "react-redux";
+import * as actions from "../../actions";
+import Loading from "../../components/Loading";
+import history from "../../history";
+
+const mqtt = require("mqtt");
+var options = {
+    port: 17267,
+    host: "mqtt://soldier.cloudmqtt.com",
+    clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8),
+    username: "vfmquhui",
+    password: "yXMUCDc8eoO8",
+    keepalive: 60,
+    reconnectPeriod: 1000,
+    protocolId: "MQIsdp",
+    protocolVersion: 3,
+    clean: true,
+    encoding: "utf8",
+};
+const client = mqtt.connect("mqtt://soldier.cloudmqtt.com", options);
+client.subscribe("orderStatus");
 
 const statusArr = [
     "Wait",
@@ -9,23 +31,23 @@ const statusArr = [
     "Preparing",
     "OntheWay",
     "Arrived",
-    "End"
+    "End",
 ];
 
 const trueCenterText = { paddingRight: "5vw" };
 
-const MessageWithAnimation = props => {
+const MessageWithAnimation = (props) => {
     const charPoses = {
         exit: {
             y: 3,
             opacity: 0,
-            delay: ({ charIndex }) => charIndex * props.charSpeed
+            delay: ({ charIndex }) => charIndex * props.charSpeed,
         },
         enter: {
             y: 0,
             opacity: 1,
-            delay: ({ charIndex }) => charIndex * props.charSpeed
-        }
+            delay: ({ charIndex }) => charIndex * props.charSpeed,
+        },
     };
     return (
         <Header as="h2" icon textAlign="center">
@@ -46,17 +68,25 @@ const MessageWithAnimation = props => {
     );
 };
 
-const RenderStatus = props => {
-    let status = statusArr[props.status];
+const RenderStatus = (props) => {
+    let status = props.status;
     switch (status) {
-        case "Wait":
+        case "Waiting":
             return (
-                <MessageWithAnimation
-                    title="Wait for confirmation"
-                    loading="..."
-                    animation={props.animation}
-                    charSpeed={60}
-                />
+                <div>
+                    <MessageWithAnimation
+                        title="Wait for confirmation"
+                        loading="..."
+                        animation={props.animation}
+                        charSpeed={60}
+                    />
+                    <Button
+                        onClick={() => props.cancelOrder(props.orderId)}
+                        style={{ marginRight: "5vw" }}
+                    >
+                        Cancel
+                    </Button>
+                </div>
             );
         case "Accepted":
             return (
@@ -99,7 +129,7 @@ const RenderStatus = props => {
                         </Header.Content>
                     </Header>
                     <Button
-                        onClick={() => props.setOpenAvocabot(prev => !prev)}
+                        onClick={() => props.setOpenAvocabot((prev) => !prev)}
                     >
                         {props.openAvocabot === false
                             ? "Open Avocabot"
@@ -129,23 +159,42 @@ const RenderStatus = props => {
     }
 };
 
-export default () => {
+const Waiting = (props) => {
     const [animation, setAnimation] = useState(false);
-    const [status, setStatus] = useState(5);
     const [openAvocabot, setOpenAvocabot] = useState(false);
+    const [mesg, setMesg] = useState("");
+
+    client.on("message", (topic, message) => {
+        var note;
+        if (topic === "orderStatus") {
+            note = message.toString();
+            console.log(note);
+        }
+    });
 
     useEffect(() => {
         setInterval(() => {
-            setAnimation(prev => !prev);
+            setAnimation((prev) => !prev);
         }, 1200); //1200
 
-        let timer = setInterval(() => {
-            setStatus(prev => prev + 1);
-        }, 5000); //5000
+        // let timer = setInterval(() => {
+        //     setStatus(prev => prev + 1);
+        // }, 5000); //5000
     }, []);
 
+    const cancelOrder = async (orderId) => {
+        props.showLoading(true);
+        const response = await api.get(`/guest/cancelOrder?orderID=${orderId}`);
+        //"the order has been cancelled"
+        props.showLoading(false);
+        if (response.data === "the order has been cancelled") {
+            history.push("/order");
+            props.setPageStatus("");
+        }
+    };
+
     return (
-        <>
+        <Loading status={props.isLoading} text="Signing in...">
             <Image
                 src="/cheezyAvocado2.png"
                 size="medium"
@@ -153,11 +202,23 @@ export default () => {
                 style={{ marginTop: "11em", paddingRight: "2vw" }}
             />
             <RenderStatus
-                status={status}
+                status={props.pageStatus}
                 animation={animation}
                 openAvocabot={openAvocabot}
+                orderId={props.orderId}
                 setOpenAvocabot={setOpenAvocabot}
+                cancelOrder={cancelOrder}
             />
-        </>
+        </Loading>
     );
 };
+
+const mapStateToProps = (state) => {
+    return {
+        orderId: state.order.orderId,
+        pageStatus: state.status,
+        isLoading: state.loading.loadingStatus,
+    };
+};
+
+export default connect(mapStateToProps, actions)(Waiting);
