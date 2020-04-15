@@ -169,7 +169,7 @@ const OrderedItemCard = (props) => {
         props.showLoading(false);
         console.log(response.data.orderID);
         props.setOrderId(response.data.orderID);
-        props.setPageStatus("Waiting");
+        props.setPageStatus("pending");
         history.push("/status");
     };
 

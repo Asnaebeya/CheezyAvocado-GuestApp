@@ -87,7 +87,7 @@ const MessageWithAnimation = (props) => {
 const RenderStatus = (props) => {
     let { status } = props;
     switch (status) {
-        case "Waiting":
+        case "pending":
             return (
                 <div>
                     <MessageWithAnimation
@@ -199,36 +199,43 @@ const Waiting = (props) => {
     const { pageStatus } = props;
     const [showButton, setShowButton] = useState(1);
 
-    client.on("message", (topic, message) => {
-        var note;
-        if (topic === "orderStatus") {
-            note = message.toString();
-            console.log(note);
-            if (note === "approved") {
-                props.setPageStatus(note);
-            }
-            if (note === "on the way") {
-                props.setPageStatus(note);
-            }
-            if (note === "arrived") {
-                props.setPageStatus(note);
-            }
-        }
-
-        if (topic === "lockerIsOpen" && pageStatus === "arrived") {
-            setShowButton(3);
-        }
-        if (topic === "lockerIsClosed" && pageStatus === "arrived") {
-            props.showLoading(false);
-            props.setPageStatus("end");
-        }
-    });
-
     useEffect(() => {
         setInterval(() => {
             setAnimation((prev) => !prev);
         }, 1200); //1200
     }, []);
+
+    useEffect(() => {
+        client.on("message", (topic, message) => {
+            var note;
+            console.log(topic);
+            if (topic === "orderStatus") {
+                note = message.toString();
+                console.log(note);
+                if (note === "approved") {
+                    props.setPageStatus(note);
+                }
+                if (note === "on the way") {
+                    props.setPageStatus(note);
+                }
+                if (note === "arrived") {
+                    props.setPageStatus(note);
+                }
+            }
+            if (topic === "lockerIsOpen") {
+                if (pageStatus === "arrived") {
+                    setShowButton(3);
+                }
+            }
+            if (topic === "lockerIsClosed") {
+                if (pageStatus === "arrived") {
+                    props.showLoading(false);
+                    props.setPageStatus("end");
+                    client.end();
+                }
+            }
+        });
+    }, [pageStatus]);
 
     useEffect(() => {}, [pageStatus]);
 
@@ -246,20 +253,19 @@ const Waiting = (props) => {
     const openAvocabot = async () => {
         props.showLoading(true);
         // const response = await api.get(`/guest/openLocker`);
-
-        const response = await setTimeout(() => {
-            return 10;
-        }, 2000);
+        const response = await new Promise((resolve) =>
+            setTimeout(resolve, 2000)
+        );
         props.showLoading(false);
         setShowButton(2);
     };
 
     const closeAvocabot = async () => {
         props.showLoading(true);
+        const response = await new Promise((resolve) =>
+            setTimeout(resolve, 2000)
+        );
         // const response = await api.get(`/guest/returnRobot`);
-        const response = await setTimeout(() => {
-            return 10;
-        }, 2000);
     };
 
     return (
