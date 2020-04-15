@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import * as actions from "../../actions";
 import Loading from "../../components/Loading";
 import history from "../../history";
+import Modal from "../../components/Modal";
 
 const mqtt = require("mqtt");
 var options = {
@@ -252,24 +253,55 @@ const Waiting = (props) => {
 
     const openAvocabot = async () => {
         props.showLoading(true);
-        // const response = await api.get(`/guest/openLocker`);
-        const response = await new Promise((resolve) =>
-            setTimeout(resolve, 2000)
-        );
-        props.showLoading(false);
-        setShowButton(2);
+        //testing
+        // const response = await new Promise((resolve) =>
+        //     setTimeout(resolve("OK"), 2000)
+        // );
+        try {
+            const response = await api.get(`/guest/openLocker`);
+            if (response.data === "OK") {
+                props.showLoading(false);
+                setShowButton(2);
+            } else {
+                throw new Error("wrong response");
+            }
+        } catch (error) {
+            console.error(error);
+            props.showLoading(false);
+            props.showModal(true);
+        }
     };
 
     const closeAvocabot = async () => {
-        props.showLoading(true);
-        const response = await new Promise((resolve) =>
-            setTimeout(resolve, 2000)
-        );
-        // const response = await api.get(`/guest/returnRobot`);
+        //testing
+        // const response = await new Promise((resolve) =>
+        //     setTimeout(resolve("OK"), 2000)
+        // );
+
+        try {
+            const response = await api.get(`/guest/returnRobot`);
+            if (response.data === "OK") {
+                props.showLoading(true);
+            } else {
+                throw new Error("wrong response");
+            }
+        } catch (error) {
+            console.error(error);
+            props.showModal(true);
+        }
     };
 
     return (
         <Loading status={props.isLoading} text="Loading...">
+            <Modal
+                HeaderIcon="x"
+                modal={props.modalStatus}
+                title="Error"
+                description="Error with Avocabot, Please try again"
+                colorButton="green"
+                ButtonIconName="checkmark"
+                TextOnButton="Cancel"
+            />
             <Image
                 src="/cheezyAvocado2.png"
                 size="medium"
@@ -295,6 +327,7 @@ const mapStateToProps = (state) => {
         orderId: state.order.orderId,
         pageStatus: state.status,
         isLoading: state.loading.loadingStatus,
+        modalStatus: state.modal.modalStatus,
     };
 };
 
