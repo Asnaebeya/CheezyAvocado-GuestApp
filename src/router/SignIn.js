@@ -41,6 +41,7 @@ const SignIn = (props) => {
                 lastName: window.localStorage.lastName,
                 guestId: window.localStorage.guestId,
                 reservationId: window.localStorage.reservationId,
+                
             });
         }
     }, []);

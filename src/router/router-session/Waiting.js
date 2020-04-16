@@ -201,9 +201,16 @@ const Waiting = (props) => {
     const [showButton, setShowButton] = useState(1);
 
     useEffect(() => {
+        props.setPageStatus(localStorage.status);
+    }, [pageStatus]);
+
+    useEffect(() => {
         setInterval(() => {
             setAnimation((prev) => !prev);
         }, 1200); //1200
+        if (!localStorage.status) {
+            localStorage.setItem("status", pageStatus);
+        }
     }, []);
 
     useEffect(() => {
@@ -215,12 +222,15 @@ const Waiting = (props) => {
                 console.log(note);
                 if (note === "approved") {
                     props.setPageStatus(note);
+                    localStorage.setItem("status", note);
                 }
                 if (note === "on the way") {
                     props.setPageStatus(note);
+                    localStorage.setItem("status", note);
                 }
                 if (note === "arrived") {
                     props.setPageStatus(note);
+                    localStorage.setItem("status", note);
                 }
             }
             if (topic === "lockerIsOpen") {
@@ -232,6 +242,7 @@ const Waiting = (props) => {
                 if (pageStatus === "arrived") {
                     props.showLoading(false);
                     props.setPageStatus("end");
+                    localStorage.setItem("status", "end");
                     client.end();
                 }
             }

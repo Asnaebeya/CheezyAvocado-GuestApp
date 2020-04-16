@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import * as actions from "../actions";
+import history from "../history";
 
 import requireAuth from "./HOC/requireAuth";
 import CardInformation from "../components/CardInformation";
@@ -16,6 +17,10 @@ const Welcome = (props) => {
                 guestId: window.localStorage.guestId,
                 reservationId: window.localStorage.reservationId,
             });
+        }
+
+        if (window.localStorage.status) {
+            history.push("/status");
         }
     }, []);
 
