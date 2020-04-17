@@ -171,6 +171,7 @@ const RenderStatus = (props) => {
                         style={{ marginRight: "5vw" }}
                         onClick={() => {
                             props.setPageStatus("");
+                            localStorage.setItem("status", "");
                             history.push("/bill");
                         }}
                     >
@@ -183,6 +184,7 @@ const RenderStatus = (props) => {
                         style={{ marginRight: "5vw" }}
                         onClick={() => {
                             props.setPageStatus("");
+                            localStorage.setItem("status", "");
                             history.push("/welcome");
                         }}
                     >
@@ -201,7 +203,9 @@ const Waiting = (props) => {
     const [showButton, setShowButton] = useState(1);
 
     useEffect(() => {
-        props.setPageStatus(localStorage.status);
+        if (localStorage.status) {
+            props.setPageStatus(localStorage.status);
+        }
     }, [pageStatus]);
 
     useEffect(() => {
@@ -215,22 +219,26 @@ const Waiting = (props) => {
 
     useEffect(() => {
         client.on("message", (topic, message) => {
-            var note;
+            var mystatus;
             console.log(topic);
+
+            // please check orderId too
+
             if (topic === "orderStatus") {
-                note = message.toString();
-                console.log(note);
-                if (note === "approved") {
-                    props.setPageStatus(note);
-                    localStorage.setItem("status", note);
+                mystatus = JSON.parse(message.toString()).status;
+
+                console.log(mystatus);
+                if (mystatus === "approved") {
+                    props.setPageStatus(mystatus);
+                    localStorage.setItem("status", mystatus);
                 }
-                if (note === "on the way") {
-                    props.setPageStatus(note);
-                    localStorage.setItem("status", note);
+                if (mystatus === "on the way") {
+                    props.setPageStatus(mystatus);
+                    localStorage.setItem("status", mystatus);
                 }
-                if (note === "arrived") {
-                    props.setPageStatus(note);
-                    localStorage.setItem("status", note);
+                if (mystatus === "arrived") {
+                    props.setPageStatus(mystatus);
+                    localStorage.setItem("status", mystatus);
                 }
             }
             if (topic === "lockerIsOpen") {
