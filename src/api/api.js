@@ -1,12 +1,12 @@
 import axios from "axios";
 
-export default axios.create({
-    baseURL: "http://localhost:3000",
-});
-
 // export default axios.create({
-//     baseURL: "https://cheezyavocado.herokuapp.com/staff",
+//     baseURL: "http://localhost:3000",
 // });
+
+export default axios.create({
+    baseURL: "https://cheezyavocado.herokuapp.com",
+});
 
 // import Guestapi from "../api/api"
 //     Guestapi.get("/getFoodOrders")

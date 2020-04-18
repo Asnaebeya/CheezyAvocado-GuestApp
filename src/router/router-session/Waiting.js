@@ -220,23 +220,35 @@ const Waiting = (props) => {
     useEffect(() => {
         client.on("message", (topic, message) => {
             var mystatus;
+            var myOrderId;
             console.log(topic);
+            console.log(localStorage.orderId);
 
             // please check orderId too
 
             if (topic === "orderStatus") {
                 mystatus = JSON.parse(message.toString()).status;
+                myOrderId = JSON.parse(message.toString()).orderID;
 
-                console.log(mystatus);
-                if (mystatus === "approved") {
+                // console.log(mystatus, myOrderId);
+                if (
+                    mystatus === "approved" &&
+                    myOrderId === localStorage.orderId
+                ) {
                     props.setPageStatus(mystatus);
                     localStorage.setItem("status", mystatus);
                 }
-                if (mystatus === "on the way") {
+                if (
+                    mystatus === "on the way" &&
+                    myOrderId === localStorage.orderId
+                ) {
                     props.setPageStatus(mystatus);
                     localStorage.setItem("status", mystatus);
                 }
-                if (mystatus === "arrived") {
+                if (
+                    mystatus === "arrived" &&
+                    myOrderId === localStorage.orderId
+                ) {
                     props.setPageStatus(mystatus);
                     localStorage.setItem("status", mystatus);
                 }
@@ -250,7 +262,9 @@ const Waiting = (props) => {
                 if (pageStatus === "arrived") {
                     props.showLoading(false);
                     props.setPageStatus("end");
+                    localStorage.setItem("orderId", "");
                     localStorage.setItem("status", "end");
+
                     client.end();
                 }
             }
