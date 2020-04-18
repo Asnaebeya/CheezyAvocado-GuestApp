@@ -281,6 +281,7 @@ const Waiting = (props) => {
         if (response.data === "the order has been cancelled") {
             history.push("/order");
             props.setPageStatus("");
+            localStorage.setItem("status", "");
         }
     };
 
