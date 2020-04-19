@@ -8,10 +8,10 @@ import OrderPage from "./router/OrderPage";
 import OrderStatus from "./router/OrderStatus";
 import ViewBillPayment from "./router/ViewBillPayment";
 
-const App = props => {
+const App = (props) => {
     return (
         <div>
-            <Header />
+            {/* <Header /> */}
             <Switch>
                 <Route path="/" exact component={SignIn} />
                 <Route path="/welcome" component={Welcome} />

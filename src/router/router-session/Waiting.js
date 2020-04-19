@@ -201,6 +201,7 @@ const Waiting = (props) => {
     const [animation, setAnimation] = useState(false);
     const { pageStatus } = props;
     const [showButton, setShowButton] = useState(1);
+    const [listenLockerMQTT, setListenLockerMQTT] = useState(false);
 
     useEffect(() => {
         if (localStorage.status) {
@@ -251,21 +252,25 @@ const Waiting = (props) => {
                 ) {
                     props.setPageStatus(mystatus);
                     localStorage.setItem("status", mystatus);
+                    setListenLockerMQTT(true);
                 }
             }
             if (topic === "lockerIsOpen") {
-                if (pageStatus === "arrived") {
+                if (pageStatus === "arrived" && setListenLockerMQTT) {
                     setShowButton(3);
                 }
             }
             if (topic === "lockerIsClosed") {
-                if (pageStatus === "arrived") {
+                if (pageStatus === "arrived" && setListenLockerMQTT) {
                     props.showLoading(false);
                     props.setPageStatus("end");
+                    setListenLockerMQTT(false);
                     localStorage.setItem("orderId", "");
                     localStorage.setItem("status", "end");
 
-                    client.end();
+                    client.end(() => {
+                        console.log("mqtt disconnected");
+                    });
                 }
             }
         });
