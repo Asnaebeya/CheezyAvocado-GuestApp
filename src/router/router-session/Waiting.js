@@ -219,6 +219,7 @@ const Waiting = (props) => {
     }, []);
 
     client.on("message", (topic, message) => {
+        console.log("listening to mqtt");
         var mystatus;
         var myOrderId;
         console.log(topic);
@@ -295,6 +296,7 @@ const Waiting = (props) => {
             if (response.data === "OK") {
                 props.showLoading(false);
                 setShowButton(2);
+                setTimeout(() => setShowButton(3), 5000);
             } else {
                 throw new Error("wrong response");
             }
