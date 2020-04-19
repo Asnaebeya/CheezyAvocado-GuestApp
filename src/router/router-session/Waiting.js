@@ -275,7 +275,7 @@ const Waiting = (props) => {
                 }
             }
         });
-    }, [pageStatus, props.isLoading]);
+    }, [pageStatus]);
 
     useEffect(() => {}, [pageStatus]);
 
