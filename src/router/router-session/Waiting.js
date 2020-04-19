@@ -270,11 +270,12 @@ const Waiting = (props) => {
 
                     client.end(() => {
                         console.log("mqtt disconnected");
+                        props.showLoading(false);
                     });
                 }
             }
         });
-    }, [pageStatus]);
+    }, [pageStatus, props.isLoading]);
 
     useEffect(() => {}, [pageStatus]);
 
@@ -287,6 +288,7 @@ const Waiting = (props) => {
             history.push("/order");
             props.setPageStatus("");
             localStorage.setItem("status", "");
+            props.showLoading(false);
         }
     };
 
@@ -326,6 +328,7 @@ const Waiting = (props) => {
             }
         } catch (error) {
             console.error(error);
+            props.showLoading(false);
             props.showModal(true);
         }
     };

@@ -7,11 +7,23 @@ import ItemList from "./router/ItemList";
 import OrderPage from "./router/OrderPage";
 import OrderStatus from "./router/OrderStatus";
 import ViewBillPayment from "./router/ViewBillPayment";
+import history from "./history";
 
 const App = (props) => {
     return (
         <div>
             {/* <Header /> */}
+            {localStorage.token && (
+                <button
+                    style={{ marginRight: "1em" }}
+                    onClick={() => {
+                        localStorage.clear();
+                        history.push("/");
+                    }}
+                >
+                    SignOut
+                </button>
+            )}
             <Switch>
                 <Route path="/" exact component={SignIn} />
                 <Route path="/welcome" component={Welcome} />
