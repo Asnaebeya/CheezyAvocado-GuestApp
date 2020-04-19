@@ -218,64 +218,59 @@ const Waiting = (props) => {
         }
     }, []);
 
-    useEffect(() => {
-        client.on("message", (topic, message) => {
-            var mystatus;
-            var myOrderId;
-            console.log(topic);
-            console.log(localStorage.orderId);
+    // useEffect(() => {
 
-            // please check orderId too
+    // }, [pageStatus]);
+    client.on("message", (topic, message) => {
+        var mystatus;
+        var myOrderId;
+        console.log(topic);
+        console.log(localStorage.orderId);
 
-            if (topic === "orderStatus") {
-                mystatus = JSON.parse(message.toString()).status;
-                myOrderId = JSON.parse(message.toString()).orderID;
+        // please check orderId too
 
-                // console.log(mystatus, myOrderId);
-                if (
-                    mystatus === "approved" &&
-                    myOrderId === localStorage.orderId
-                ) {
-                    props.setPageStatus(mystatus);
-                    localStorage.setItem("status", mystatus);
-                }
-                if (
-                    mystatus === "on the way" &&
-                    myOrderId === localStorage.orderId
-                ) {
-                    props.setPageStatus(mystatus);
-                    localStorage.setItem("status", mystatus);
-                }
-                if (
-                    mystatus === "arrived" &&
-                    myOrderId === localStorage.orderId
-                ) {
-                    props.setPageStatus(mystatus);
-                    localStorage.setItem("status", mystatus);
-                    setListenLockerMQTT(true);
-                }
+        if (topic === "orderStatus") {
+            mystatus = JSON.parse(message.toString()).status;
+            myOrderId = JSON.parse(message.toString()).orderID;
+
+            // console.log(mystatus, myOrderId);
+            if (mystatus === "approved" && myOrderId === localStorage.orderId) {
+                props.setPageStatus(mystatus);
+                localStorage.setItem("status", mystatus);
             }
-            if (topic === "lockerIsOpen") {
-                if (pageStatus === "arrived" && setListenLockerMQTT) {
-                    setShowButton(3);
-                }
+            if (
+                mystatus === "on the way" &&
+                myOrderId === localStorage.orderId
+            ) {
+                props.setPageStatus(mystatus);
+                localStorage.setItem("status", mystatus);
             }
-            if (topic === "lockerIsClosed") {
-                if (pageStatus === "arrived" && setListenLockerMQTT) {
+            if (mystatus === "arrived" && myOrderId === localStorage.orderId) {
+                props.setPageStatus(mystatus);
+                localStorage.setItem("status", mystatus);
+                setListenLockerMQTT(true);
+            }
+        }
+        if (topic === "lockerIsOpen") {
+            if (pageStatus === "arrived" && setListenLockerMQTT) {
+                setShowButton(3);
+            }
+        }
+        if (topic === "lockerIsClosed") {
+            if (pageStatus === "arrived" && setListenLockerMQTT) {
+                props.showLoading(false);
+                props.setPageStatus("end");
+                setListenLockerMQTT(false);
+                localStorage.setItem("orderId", "");
+                localStorage.setItem("status", "end");
+
+                client.end(() => {
+                    console.log("mqtt disconnected");
                     props.showLoading(false);
-                    props.setPageStatus("end");
-                    setListenLockerMQTT(false);
-                    localStorage.setItem("orderId", "");
-                    localStorage.setItem("status", "end");
-
-                    client.end(() => {
-                        console.log("mqtt disconnected");
-                        props.showLoading(false);
-                    });
-                }
+                });
             }
-        });
-    }, [pageStatus]);
+        }
+    });
 
     useEffect(() => {}, [pageStatus]);
 
