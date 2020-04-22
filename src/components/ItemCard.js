@@ -62,7 +62,7 @@ const ItemCard = (props) => {
     const [sortBy, setSortBy] = useState("");
 
     // need to fix this
-    
+
     // useEffect(() => {
     //     let IdOfCurrentOrder = props.currentOrder.map((food) => food.id);
     //     let notContainingArray = foods.filter(
@@ -284,7 +284,11 @@ const ItemCard = (props) => {
                 {conditionalRender()}
 
                 <Button
-                    style={{ marginRight: "1em" }}
+                    style={{
+                        marginRight: "1em",
+                        color: "#FFDB58",
+                        backgroundColor: "#556B2F",
+                    }}
                     onClick={() => orderClickHandler()}
                 >
                     Order

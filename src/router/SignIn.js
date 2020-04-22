@@ -21,8 +21,13 @@ const renderInput = (props) => {
 
     return (
         <div className={className}>
-            <label>{label}</label>
-            <input {...input} autoComplete="off" type={type} />
+            <label style={{ color: "hsl(82, 39%, 30%)" }}>{label}</label>
+            <input
+                style={{ backgroundColor: `rgba(193, 184, 65, 0.35)` }}
+                {...input}
+                autoComplete="off"
+                type={type}
+            />
             {renderError(meta)}
         </div>
     );
@@ -41,7 +46,6 @@ const SignIn = (props) => {
                 lastName: window.localStorage.lastName,
                 guestId: window.localStorage.guestId,
                 reservationId: window.localStorage.reservationId,
-                
             });
         }
     }, []);
@@ -77,7 +81,11 @@ const SignIn = (props) => {
                 style={{ marginBottom: "3em" }}
             >
                 <div>
-                    <Header as="h1" textAlign="center">
+                    <Header
+                        as="h1"
+                        textAlign="center"
+                        style={{ color: "hsl(82, 39%, 30%)" }}
+                    >
                         Cheezy Avocado
                     </Header>
                     <Header
@@ -85,6 +93,7 @@ const SignIn = (props) => {
                         textAlign="center"
                         style={{
                             paddingRight: "1vw",
+                            color: "hsl(82, 39%, 30%)",
                         }}
                     >
                         Your Delivery Service
@@ -102,20 +111,23 @@ const SignIn = (props) => {
                     component={renderInput}
                     label="What's your room number?"
                     parse={(value) => parseInt(value, 10)}
+                    className="input-style"
                 />
                 <Field
                     name="lastName"
                     type="text"
                     component={renderInput}
                     label="What's your lastname?"
+                    className="input-style"
                 />
                 <Field
                     name="password"
                     type="password"
                     component={renderInput}
                     label="What's your password?"
+                    className="input-style"
                 />
-                <button className="ui button primary">Enter</button>
+                <button className="ui button primary" style={{color:"#FFDB58", backgroundColor:"#556B2F"}}>Enter</button>
                 <div>{props.modalStatus ? props.errorMessage : ""}</div>
             </form>
         </Loading>

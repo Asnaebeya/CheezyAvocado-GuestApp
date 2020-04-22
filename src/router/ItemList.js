@@ -6,7 +6,7 @@ import _ from "lodash";
 import { connect } from "react-redux";
 import { updateOrderedItem } from "../actions";
 
-const ItemList = props => {
+const ItemList = (props) => {
     let type = props.match.params.type;
     console.log(type);
 
@@ -22,14 +22,16 @@ const ItemList = props => {
         props.updateOrderedItem({ orderedItems: [], type: "" });
 
         history.push("/welcome");
-        
-        
     };
 
     return (
         <div>
             <Button
-                style={{ margin: "0 2em 0 0" }}
+                style={{
+                    margin: "0 2em 0 0",
+                    color: "#FFDB58",
+                    backgroundColor: "#556B2F",
+                }}
                 circular
                 icon="angle left"
                 floated="left"
@@ -45,5 +47,3 @@ const ItemList = props => {
 };
 
 export default connect(null, { updateOrderedItem })(ItemList);
-
-

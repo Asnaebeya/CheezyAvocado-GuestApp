@@ -8,3 +8,11 @@
     margin-left: auto;
     margin-right: auto;
 }
+
+.green-text {
+    color: hsl(82, 39%, 30%);
+}
+
+label {
+    color: hsl(82, 39%, 30%);
+}

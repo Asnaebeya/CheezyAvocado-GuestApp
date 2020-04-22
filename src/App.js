@@ -8,21 +8,21 @@ import OrderPage from "./router/OrderPage";
 import OrderStatus from "./router/OrderStatus";
 import ViewBillPayment from "./router/ViewBillPayment";
 import history from "./history";
+import "./App.css";
+import { Button } from "semantic-ui-react";
 
 const App = (props) => {
     return (
         <div>
             {/* <Header /> */}
             {localStorage.token && (
-                <button
-                    style={{ marginRight: "1em" }}
+                <Button
                     onClick={() => {
                         localStorage.clear();
                         history.push("/");
                     }}
-                >
-                    SignOut
-                </button>
+                    style={{ backgroundColor: "#fff2cb" }}
+                ></Button>
             )}
             <Switch>
                 <Route path="/" exact component={SignIn} />

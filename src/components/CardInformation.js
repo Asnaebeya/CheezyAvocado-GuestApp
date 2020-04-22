@@ -28,10 +28,23 @@ const CardInformation = (props) => {
     return (
         <Container style={{ marginTop: "2em" }}>
             <div>
-                <Header as="h2" attached="top">
+                <Header
+                    as="h2"
+                    attached="top"
+                    style={{
+                        color: "#556B2F",
+                        backgroundColor: `rgba(193,184,65,0.7)`,
+                    }}
+                >
                     {`Hello, ${firstName}`}
                 </Header>
-                <Segment attached>
+                <Segment
+                    attached
+                    style={{
+                        color: "#556B2F",
+                        backgroundColor: `rgba(193,184,65,0.4)`,
+                    }}
+                >
                     {`Name: ${firstName} ${lastName}`}
                     <br />
                     {`Room Number: ${roomNumber}`}
@@ -39,7 +52,12 @@ const CardInformation = (props) => {
             </div>
             <Button
                 as={Link}
-                style={{ marginTop: "1em", marginLeft: 180 }}
+                style={{
+                    marginTop: "1em",
+                    marginLeft: 180,
+                    color: "#FFDB58",
+                    backgroundColor: "#556B2F",
+                }}
                 floated="right"
                 to="/bill"
             >
@@ -56,7 +74,12 @@ const CardInformation = (props) => {
                             ui={false}
                         />
                         <Card.Content>
-                            <Card.Header style={{ textAlign: "center" }}>
+                            <Card.Header
+                                style={{
+                                    textAlign: "center",
+                                    color: "#556B2F",
+                                }}
+                            >
                                 Amenities
                             </Card.Header>
                         </Card.Content>
@@ -71,7 +94,12 @@ const CardInformation = (props) => {
                             ui={false}
                         />
                         <Card.Content>
-                            <Card.Header style={{ textAlign: "center" }}>
+                            <Card.Header
+                                style={{
+                                    textAlign: "center",
+                                    color: "#556B2F",
+                                }}
+                            >
                                 Food
                             </Card.Header>
                         </Card.Content>

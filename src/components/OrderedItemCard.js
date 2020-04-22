@@ -218,7 +218,11 @@ const OrderedItemCard = (props) => {
                     )}
 
                     <Button
-                        style={{ marginRight: "1em" }}
+                        style={{
+                            marginRight: "1em",
+                            color: "#FFDB58",
+                            backgroundColor: "#556B2F",
+                        }}
                         onClick={() => ConfirmOrderClickHandler()}
                     >
                         Confirm Your Order

@@ -51,7 +51,7 @@ const charPosesDefaults = {
     },
 };
 
-const trueCenterText = { paddingRight: "5vw" };
+const trueCenterText = { paddingRight: "5vw", color: "#556B2F" };
 
 const MessageWithAnimation = (props) => {
     const charPoses = {
@@ -148,12 +148,25 @@ const RenderStatus = (props) => {
                     </Header>
 
                     {props.showButton === 1 && (
-                        <Button onClick={() => props.openAvocabot()}>
+                        <Button
+                            style={{
+                                color: "#FFDB58",
+                                background: `rgb(6,36,0)`,
+                                background: `linear-gradient(90deg, rgba(6,36,0,1) 0%, rgba(20,214,9,1) 36%, rgba(0,212,255,1) 100%)`,
+                            }}
+                            onClick={() => props.openAvocabot()}
+                        >
                             Open Avocabot
                         </Button>
                     )}
                     {props.showButton === 3 && (
-                        <Button onClick={() => props.closeAvocabot()}>
+                        <Button
+                            style={{
+                                color: "#FFDB58",
+                                backgroundColor: "#556B2F",
+                            }}
+                            onClick={() => props.closeAvocabot()}
+                        >
                             Close Avocabot
                         </Button>
                     )}
@@ -168,7 +181,11 @@ const RenderStatus = (props) => {
                         </Header.Content>
                     </Header>
                     <Button
-                        style={{ marginRight: "5vw" }}
+                        style={{
+                            marginRight: "5vw",
+                            color: "#FFDB58",
+                            backgroundColor: "#556B2F",
+                        }}
                         onClick={() => {
                             props.setPageStatus("");
                             localStorage.setItem("status", "");
@@ -181,7 +198,11 @@ const RenderStatus = (props) => {
                     <br />
 
                     <Button
-                        style={{ marginRight: "5vw" }}
+                        style={{
+                            marginRight: "5vw",
+                            color: "#FFDB58",
+                            backgroundColor: "#556B2F",
+                        }}
                         onClick={() => {
                             props.setPageStatus("");
                             localStorage.setItem("status", "");
