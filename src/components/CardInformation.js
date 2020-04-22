@@ -29,7 +29,7 @@ const CardInformation = (props) => {
         <Container style={{ marginTop: "2em" }}>
             <div>
                 <Header as="h2" attached="top">
-                    {`Hello, ${lastName}`}
+                    {`Hello, ${firstName}`}
                 </Header>
                 <Segment attached>
                     {`Name: ${firstName} ${lastName}`}
