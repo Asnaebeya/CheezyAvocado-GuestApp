@@ -99,7 +99,11 @@ const RenderStatus = (props) => {
                     />
                     <Button
                         onClick={() => props.cancelOrder(props.orderId)}
-                        style={{ marginRight: "5vw" }}
+                        style={{
+                            marginRight: "5vw",
+                            color: "#FFDB58",
+                            backgroundColor: "#556B2F",
+                        }}
                     >
                         Cancel
                     </Button>
@@ -238,6 +242,10 @@ const Waiting = (props) => {
             localStorage.setItem("status", pageStatus);
         }
     }, []);
+
+    client.on("error", function (err) {
+        console.log(err);
+    });
 
     client.on("message", (topic, message) => {
         console.log("listening to mqtt");

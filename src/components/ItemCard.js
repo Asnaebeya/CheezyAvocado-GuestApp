@@ -15,7 +15,7 @@ import api from "../api/api";
 import history from "../history";
 import RenderCardList from "./RenderCardList";
 import "./OrderItemCard.css";
-
+import "./ItemCard.css";
 // LIST OF ITEMS LIKE FOOD AND AMENITIES
 
 //         {"foodID": "0001",
@@ -272,20 +272,30 @@ const ItemCard = (props) => {
                     onChange={handleSortByChange}
                 />
             )}
-            <Item.Group unstackable={true}>
-                <RenderCardList
-                    foods={foods}
-                    increaseHandle={increaseHandle}
-                    decreaseHandle={decreaseHandle}
-                    type={props.type}
-                />
-            </Item.Group>
+
+            <div
+                style={{
+                    height: "44em",
+                    overflowY: "scroll",
+                    marginTop: "0.5em",
+                    marginBottom: "0.25em",
+                }}
+            >
+                <Item.Group unstackable={true}>
+                    <RenderCardList
+                        foods={foods}
+                        increaseHandle={increaseHandle}
+                        decreaseHandle={decreaseHandle}
+                        type={props.type}
+                    />
+                </Item.Group>
+            </div>
+
             <div className="order-content">
                 {conditionalRender()}
 
                 <Button
                     style={{
-                        marginRight: "1em",
                         color: "#FFDB58",
                         backgroundColor: "#556B2F",
                     }}

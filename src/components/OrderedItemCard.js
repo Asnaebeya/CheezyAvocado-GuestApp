@@ -199,14 +199,28 @@ const OrderedItemCard = (props) => {
             <br />
 
             <Container style={{ marginTop: "1em" }}>
-                <Item.Group unstackable={true}>
-                    <RenderCardList
-                        foods={foods}
-                        increaseHandle={increaseHandle}
-                        decreaseHandle={decreaseHandle}
-                        type={props.type}
-                    />
-                </Item.Group>
+                <div
+                    style={{
+                        height: "44em",
+                        overflowY: "scroll",
+                        marginTop: "0.5em",
+                        marginBottom: "0.25em",
+                    }}
+                >
+                    {props.currentOrder.length === 0 && (
+                        <Header style={{ textAlign: "center" }}>
+                            No order in cart
+                        </Header>
+                    )}
+                    <Item.Group unstackable={true}>
+                        <RenderCardList
+                            foods={foods}
+                            increaseHandle={increaseHandle}
+                            decreaseHandle={decreaseHandle}
+                            type={props.type}
+                        />
+                    </Item.Group>
+                </div>
                 <div className="order-content">
                     {props.type === "food" ? (
                         <div>
@@ -219,7 +233,6 @@ const OrderedItemCard = (props) => {
 
                     <Button
                         style={{
-                            marginRight: "1em",
                             color: "#FFDB58",
                             backgroundColor: "#556B2F",
                         }}
