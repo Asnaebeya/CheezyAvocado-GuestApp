@@ -8,7 +8,7 @@ import * as actions from "../../actions";
 import Loading from "../../components/Loading";
 import history from "../../history";
 import Modal from "../../components/Modal";
-import { client } from "../../App";
+import client from "../../mqtt";
 
 client.subscribe("orderStatus");
 client.subscribe("lockerIsOpen");
@@ -230,8 +230,8 @@ const Waiting = (props) => {
         }
     }, []);
 
-    client.on("error", function (err) {
-        console.log(err);
+    client.on("connect", function () {
+        console.log("connected");
     });
 
     client.on("message", (topic, message) => {

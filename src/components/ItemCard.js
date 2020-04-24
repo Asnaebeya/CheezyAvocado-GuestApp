@@ -275,7 +275,7 @@ const ItemCard = (props) => {
 
             <div
                 style={{
-                    height: "44em",
+                    height: "33em",
                     overflowY: "scroll",
                     marginTop: "0.5em",
                     marginBottom: "0.25em",
