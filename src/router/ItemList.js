@@ -5,6 +5,7 @@ import { Header, Icon, Button } from "semantic-ui-react";
 import _ from "lodash";
 import { connect } from "react-redux";
 import { updateOrderedItem } from "../actions";
+import requireAuth from "./HOC/requireAuth";
 
 const ItemList = (props) => {
     let type = props.match.params.type;
@@ -46,4 +47,4 @@ const ItemList = (props) => {
     );
 };
 
-export default connect(null, { updateOrderedItem })(ItemList);
+export default connect(null, { updateOrderedItem })(requireAuth(ItemList));

@@ -5,6 +5,7 @@ import { Container, List, Button, Header } from "semantic-ui-react";
 import history from "../history";
 import { Link } from "react-router-dom";
 import api from "../api/api";
+import requireAuth from "./HOC/requireAuth";
 
 const ORDER_HISTORY = [
     {
@@ -163,7 +164,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, actions)(ViewBillPayment);
+export default connect(mapStateToProps, actions)(requireAuth(ViewBillPayment));
 
 // <List.Item className="ui segment item">
 // <List.Header>{key}</List.Header>

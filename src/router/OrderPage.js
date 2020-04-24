@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import _ from "lodash";
 import history from "../history";
 import Loading from "../components/Loading";
+import requireAuth from "./HOC/requireAuth";
 
 const OrderPage = (props) => {
     useEffect(() => {
@@ -42,7 +43,11 @@ const OrderPage = (props) => {
     return (
         <Loading status={props.isLoading} text="Loading...">
             <Button
-                style={{ margin: "0 2em 0 0" }}
+                style={{
+                    margin: "0 2em 0 0",
+                    color: "#FFDB58",
+                    backgroundColor: "#556B2F",
+                }}
                 circular
                 icon="angle left"
                 floated="left"
@@ -60,4 +65,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(OrderPage);
+export default connect(mapStateToProps)(requireAuth(OrderPage));
