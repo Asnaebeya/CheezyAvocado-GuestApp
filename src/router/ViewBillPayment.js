@@ -94,9 +94,9 @@ const ViewBillPayment = (props) => {
                 <List.Item key={order.orderID} className="ui segment item">
                     <Header as={"h3"}>
                         Order: {order.orderID}
-                        <Header.Subheader>
+                        {/* <Header.Subheader>
                             Time: {order.timestamp}
-                        </Header.Subheader>
+                        </Header.Subheader> */}
                     </Header>
                     {ListofAttribute(order.orders)}
                     <List.Content
@@ -127,7 +127,11 @@ const ViewBillPayment = (props) => {
             <Container>
                 <Button
                     as={Link}
-                    style={{ margin: "1em 2em 0 0" }}
+                    style={{
+                        margin: "1em 2em 0 0",
+                        color: "#FFDB58",
+                        backgroundColor: "#556B2F",
+                    }}
                     circular
                     icon="angle left"
                     floated="left"
