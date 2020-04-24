@@ -8,7 +8,7 @@ import * as actions from "../../actions";
 import Loading from "../../components/Loading";
 import history from "../../history";
 import Modal from "../../components/Modal";
-import client from "./mqtt";
+import { client } from "../../App";
 
 client.subscribe("orderStatus");
 client.subscribe("lockerIsOpen");

@@ -11,6 +11,25 @@ import history from "./history";
 import "./App.css";
 import { Button } from "semantic-ui-react";
 
+const mqtt = require("mqtt");
+var options = {
+    port: 37267,
+    host: "wss://soldier.cloudmqtt.com",
+    clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8),
+    username: "vfmquhui",
+    password: "yXMUCDc8eoO8",
+    keepalive: 60,
+    reconnectPeriod: 1000,
+    protocolId: "MQIsdp",
+    protocolVersion: 3,
+    clean: true,
+    encoding: "utf8",
+};
+
+export const client = mqtt.connect("wss://soldier.cloudmqtt.com", options);
+
+
+
 const App = (props) => {
     return (
         <div>
