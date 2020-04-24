@@ -154,9 +154,11 @@ const RenderStatus = (props) => {
                     {props.showButton === 1 && (
                         <Button
                             style={{
+                                // color: "#FFDB58",
+                                // background: `rgb(6,36,0)`,
+                                // background: `linear-gradient(90deg, rgba(6,36,0,1) 0%, rgba(20,214,9,1) 36%, rgba(0,212,255,1) 100%)`,
                                 color: "#FFDB58",
-                                background: `rgb(6,36,0)`,
-                                background: `linear-gradient(90deg, rgba(6,36,0,1) 0%, rgba(20,214,9,1) 36%, rgba(0,212,255,1) 100%)`,
+                                backgroundColor: "#556B2F",
                             }}
                             onClick={() => props.openAvocabot()}
                         >
