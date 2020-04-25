@@ -74,7 +74,7 @@ const RenderStatus = (props) => {
                         charSpeed={60}
                     />
                     <Button
-                        onClick={() => props.cancelOrder(props.orderId)}
+                        onClick={() => props.cancelOrder(localStorage.orderId)}
                         style={{
                             marginRight: "5vw",
                             color: "#FFDB58",
@@ -304,6 +304,18 @@ const Waiting = (props) => {
             props.showLoading(false);
             return;
         }
+        if (response.data === "parameter is missing") {
+            history.push("/order");
+            props.setPageStatus("");
+            localStorage.setItem("status", "");
+            props.showLoading(false);
+            return;
+        }
+        history.push("/order");
+        props.setPageStatus("");
+        localStorage.setItem("status", "");
+        props.showLoading(false);
+        return;
     };
 
     const openAvocabot = async () => {
