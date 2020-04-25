@@ -235,11 +235,9 @@ const Waiting = (props) => {
     });
 
     client.on("message", (topic, message) => {
-        console.log("listening to mqtt");
-        var mystatus;
-        var myOrderId;
+        let mystatus;
+        let myOrderId;
         console.log(topic);
-        console.log(localStorage.orderId);
 
         // please check orderId too
 
@@ -247,7 +245,7 @@ const Waiting = (props) => {
             mystatus = JSON.parse(message.toString()).status;
             myOrderId = JSON.parse(message.toString()).orderID;
 
-            // console.log(mystatus, myOrderId);
+            console.log(mystatus, myOrderId);
             if (mystatus === "approved" && myOrderId === localStorage.orderId) {
                 props.setPageStatus(mystatus);
                 localStorage.setItem("status", mystatus);
