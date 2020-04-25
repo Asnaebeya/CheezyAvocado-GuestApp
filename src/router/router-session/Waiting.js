@@ -264,12 +264,20 @@ const Waiting = (props) => {
             }
         }
         if (topic === "lockerIsOpen") {
-            if (pageStatus === "arrived" && localStorage.status === "arrived") {
+            if (
+                pageStatus === "arrived" &&
+                localStorage.status === "arrived" &&
+                listenLockerMQTT === true
+            ) {
                 setShowButton(3);
             }
         }
         if (topic === "lockerIsClosed") {
-            if (pageStatus === "arrived" && localStorage.status === "arrived") {
+            if (
+                pageStatus === "arrived" &&
+                localStorage.status === "arrived" &&
+                listenLockerMQTT === true
+            ) {
                 props.showLoading(false);
                 props.setPageStatus("end");
                 setListenLockerMQTT(false);
