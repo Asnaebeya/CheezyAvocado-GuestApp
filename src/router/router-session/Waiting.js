@@ -14,15 +14,6 @@ client.subscribe("orderStatus");
 client.subscribe("lockerIsOpen");
 client.subscribe("lockerIsClosed");
 
-const statusArr = [
-    "Wait",
-    "Accepted",
-    "Preparing",
-    "OntheWay",
-    "Arrived",
-    "End",
-];
-
 const charPosesDefaults = {
     exit: {
         y: 3,
@@ -300,6 +291,13 @@ const Waiting = (props) => {
         //"the order has been cancelled"
         props.showLoading(false);
         if (response.data === "the order has been cancelled") {
+            history.push("/order");
+            props.setPageStatus("");
+            localStorage.setItem("status", "");
+            props.showLoading(false);
+            return;
+        }
+        if (response.data === "invalid orderID") {
             history.push("/order");
             props.setPageStatus("");
             localStorage.setItem("status", "");
