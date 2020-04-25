@@ -313,7 +313,7 @@ const Waiting = (props) => {
             if (response.data === "OK") {
                 props.showLoading(false);
                 setShowButton(2);
-                setTimeout(() => setShowButton(3), 5000);
+                // setTimeout(() => setShowButton(3), 5000);
             } else {
                 throw new Error("wrong response");
             }
