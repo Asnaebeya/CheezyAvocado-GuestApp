@@ -225,7 +225,6 @@ const Waiting = (props) => {
         setInterval(() => {
             setAnimation((prev) => !prev);
         }, 1200); //1200
-
         if (!localStorage.status) {
             localStorage.setItem("status", pageStatus);
         }
@@ -247,7 +246,6 @@ const Waiting = (props) => {
         if (topic === "orderStatus") {
             mystatus = JSON.parse(message.toString()).status;
             myOrderId = JSON.parse(message.toString()).orderID;
-            console.log(mystatus);
 
             // console.log(mystatus, myOrderId);
             if (mystatus === "approved" && myOrderId === localStorage.orderId) {
@@ -268,13 +266,12 @@ const Waiting = (props) => {
             }
         }
         if (topic === "lockerIsOpen") {
-            if (pageStatus === "arrived" && listenLockerMQTT) {
+            if (pageStatus === "arrived") {
                 setShowButton(3);
             }
         }
-
         if (topic === "lockerIsClosed") {
-            if (pageStatus === "arrived" && listenLockerMQTT) {
+            if (pageStatus === "arrived") {
                 props.showLoading(false);
                 props.setPageStatus("end");
                 setListenLockerMQTT(false);

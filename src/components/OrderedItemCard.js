@@ -171,6 +171,7 @@ const OrderedItemCard = (props) => {
         props.setOrderId(response.data.orderID);
         localStorage.setItem("orderId", response.data.orderID);
         props.setPageStatus("pending");
+        localStorage.setItem("status", "pending");
         history.push("/status");
     };
 
