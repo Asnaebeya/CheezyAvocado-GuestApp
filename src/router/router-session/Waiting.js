@@ -278,10 +278,10 @@ const Waiting = (props) => {
                 localStorage.setItem("orderId", "");
                 localStorage.setItem("status", "end");
 
-                client.end(() => {
-                    console.log("mqtt disconnected");
-                    props.showLoading(false);
-                });
+                // client.end(() => {
+                //     console.log("mqtt disconnected");
+                //     props.showLoading(false);
+                // });
             }
         }
     });
