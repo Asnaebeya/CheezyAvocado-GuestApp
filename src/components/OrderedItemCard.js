@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Item, Container, Header, Icon } from "semantic-ui-react";
+import {
+    Button,
+    Item,
+    Container,
+    Header,
+    Icon,
+    Modal as ComponentModal,
+} from "semantic-ui-react";
 import { connect } from "react-redux";
 import {
     updateOrderedItem,
@@ -42,6 +49,7 @@ const OrderedItemCard = (props) => {
     const [foods, setFoods] = useState(props.currentOrder);
     const [totalCost, setTotalCost] = useState(0);
     const [totalAmount, setTotalAmount] = useState(0);
+    const [modalMaximum, setModalMaximum] = useState(false);
 
     useEffect(() => {
         let existingToken = window.localStorage.token;
@@ -90,11 +98,14 @@ const OrderedItemCard = (props) => {
     };
 
     const increaseHandle = (id) => {
+        if (totalAmount === 5) {
+            setModalMaximum(true);
+        }
         const foodIndex = foods.findIndex((obj) => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
             amount:
-                totalAmount <= 10
+                totalAmount <= 4
                     ? foods[foodIndex].amount + 1
                     : foods[foodIndex].amount,
         };
@@ -191,16 +202,26 @@ const OrderedItemCard = (props) => {
 
     return (
         <div>
-            {/* <Modal
-                HeaderIcon="x"
-                modal={modal}
-                setModal={setModal}
-                title="Order Failed"
-                description="Please order at least 1 item"
-                colorButton="green"
-                ButtonIconName="checkmark"
-                TextOnButton="Cancel"
-            /> */}
+            <ComponentModal
+                open={modalMaximum}
+                size="small"
+                onClose={() => setModalMaximum(false)}
+            >
+                <Header icon="x" content="Order Failed" />
+                <ComponentModal.Content>
+                    <p>Please select at most 5 items</p>
+                </ComponentModal.Content>
+                <ComponentModal.Actions>
+                    <Button
+                        color="green"
+                        inverted
+                        onClick={() => setModalMaximum(false)}
+                    >
+                        <Icon name="checkmark" /> Cancel
+                    </Button>
+                </ComponentModal.Actions>
+            </ComponentModal>
+
             <Modal
                 HeaderIcon="x"
                 modal={props.modalStatus}
@@ -214,6 +235,11 @@ const OrderedItemCard = (props) => {
             <br />
 
             <Container style={{ marginTop: "1em" }}>
+                {props.currentOrder.length === 0 && (
+                    <Header style={{ textAlign: "center" }}>
+                        No order in cart
+                    </Header>
+                )}
                 <div
                     style={{
                         height: "33em",
@@ -222,11 +248,6 @@ const OrderedItemCard = (props) => {
                         marginBottom: "0.25em",
                     }}
                 >
-                    {props.currentOrder.length === 0 && (
-                        <Header style={{ textAlign: "center" }}>
-                            No order in cart
-                        </Header>
-                    )}
                     <Item.Group unstackable={true}>
                         <RenderCardList
                             foods={foods}

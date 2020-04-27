@@ -198,11 +198,14 @@ const ItemCard = (props) => {
     };
 
     const increaseHandle = (id) => {
+        if (calculateAmount() === 5) {
+            props.showModal(true);
+        }
         const foodIndex = foods.findIndex((obj) => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
             amount:
-                calculateAmount() <= 10
+                calculateAmount() <= 4
                     ? foods[foodIndex].amount + 1
                     : foods[foodIndex].amount,
         };
