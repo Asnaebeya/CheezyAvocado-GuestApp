@@ -93,7 +93,10 @@ const OrderedItemCard = (props) => {
         const foodIndex = foods.findIndex((obj) => obj.id === id);
         const updateObject = {
             ...foods[foodIndex],
-            amount: foods[foodIndex].amount + 1,
+            amount:
+                totalAmount <= 4
+                    ? foods[foodIndex].amount + 1
+                    : foods[foodIndex].amount,
         };
         setFoods([
             ...foods.slice(0, foodIndex),
