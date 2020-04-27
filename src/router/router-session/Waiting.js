@@ -320,6 +320,7 @@ const Waiting = (props) => {
 
     const openAvocabot = async () => {
         props.showLoading(true);
+        setListenLockerMQTT(true);
         //testing
         // const response = await new Promise((resolve) =>
         //     setTimeout(resolve("OK"), 2000)
