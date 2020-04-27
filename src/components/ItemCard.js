@@ -9,8 +9,9 @@ import {
     Container,
     Dropdown,
 } from "semantic-ui-react";
+import Modal from "./Modal";
 import { connect } from "react-redux";
-import { updateOrderedItem, loginRefresh } from "../actions";
+import { updateOrderedItem, loginRefresh, showModal } from "../actions";
 import api from "../api/api";
 import history from "../history";
 import RenderCardList from "./RenderCardList";
@@ -188,6 +189,14 @@ const ItemCard = (props) => {
         return cost;
     };
 
+    const calculateAmount = () => {
+        let amount = foods.reduce((prev, cur) => {
+            return prev + cur.amount;
+        }, 0);
+        console.log("cost:", amount);
+        return amount;
+    };
+
     const increaseHandle = (id) => {
         const foodIndex = foods.findIndex((obj) => obj.id === id);
         const updateObject = {
@@ -220,12 +229,15 @@ const ItemCard = (props) => {
     };
 
     const orderClickHandler = () => {
-        let orderedFoods = foods.filter((food) => food.amount > 0);
-        console.log({ orderedItems: orderedFoods, type: props.type });
-        let payload = { orderedItems: orderedFoods, type: props.type };
-        props.updateOrderedItem(payload);
-
-        history.push("/order");
+        if (calculateAmount() <= 5) {
+            let orderedFoods = foods.filter((food) => food.amount > 0);
+            console.log({ orderedItems: orderedFoods, type: props.type });
+            let payload = { orderedItems: orderedFoods, type: props.type };
+            props.updateOrderedItem(payload);
+            history.push("/order");
+        } else {
+            props.showModal(true);
+        }
     };
 
     const conditionalRender = () => {
@@ -253,6 +265,15 @@ const ItemCard = (props) => {
 
     return (
         <Container style={{ marginTop: "1em" }}>
+            <Modal
+                HeaderIcon="x"
+                modal={props.modalStatus}
+                title="Order Failed"
+                description="Please order at most 5 items"
+                colorButton="green"
+                ButtonIconName="checkmark"
+                TextOnButton="Cancel"
+            />
             {loading ? <p>fetching data...</p> : <div></div>}
 
             {props.type === "food" ? (
@@ -314,12 +335,16 @@ const mapStatetoProps = (state) => {
         token: state.auth.accessToken,
         guestId: state.auth.guestId,
         reservationId: state.auth.reservationId,
+        isLoading: state.loading.loadingStatus,
+        modalStatus: state.modal.modalStatus,
     };
 };
 
-export default connect(mapStatetoProps, { updateOrderedItem, loginRefresh })(
-    ItemCard
-);
+export default connect(mapStatetoProps, {
+    updateOrderedItem,
+    loginRefresh,
+    showModal,
+})(ItemCard);
 
 // return (
 //     <Item>

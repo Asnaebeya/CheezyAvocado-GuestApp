@@ -41,6 +41,7 @@ const OrderedItemCard = (props) => {
     console.log(props);
     const [foods, setFoods] = useState(props.currentOrder);
     const [totalCost, setTotalCost] = useState(0);
+    const [totalAmount, setTotalAmount] = useState(0);
 
     useEffect(() => {
         let existingToken = window.localStorage.token;
@@ -56,8 +57,17 @@ const OrderedItemCard = (props) => {
         }
     }, []);
 
+    const calculateAmount = () => {
+        let amount = foods.reduce((prev, cur) => {
+            return prev + cur.amount;
+        }, 0);
+        console.log("cost:", amount);
+        setTotalAmount(amount);
+    };
+
     useEffect(() => {
         calculateCost();
+        calculateAmount();
     }, []);
 
     useEffect(() => {
@@ -67,6 +77,7 @@ const OrderedItemCard = (props) => {
             type: props.type,
         });
         calculateCost();
+        calculateAmount();
     }, [foods]);
 
     const calculateCost = () => {
@@ -231,16 +242,38 @@ const OrderedItemCard = (props) => {
                     ) : (
                         <span></span>
                     )}
+                    {totalAmount <= 5 ? (
+                        <Button
+                            style={{
+                                color: "#FFDB58",
+                                backgroundColor: "#556B2F",
+                            }}
+                            onClick={() => ConfirmOrderClickHandler()}
+                        >
+                            Confirm Your Order
+                        </Button>
+                    ) : (
+                        <div>
+                            <Button
+                                disabled
+                                style={{
+                                    color: "#FFDB58",
+                                    backgroundColor: "#556B2F",
+                                    marginLeft: "0.33rem",
+                                }}
+                            >
+                                Confirm Your Order
+                            </Button>
 
-                    <Button
-                        style={{
-                            color: "#FFDB58",
-                            backgroundColor: "#556B2F",
-                        }}
-                        onClick={() => ConfirmOrderClickHandler()}
-                    >
-                        Confirm Your Order
-                    </Button>
+                            <p
+                                style={{
+                                    textAlign: "center",
+                                }}
+                            >
+                                Please order at most 5 items
+                            </p>
+                        </div>
+                    )}
                 </div>
             </Container>
         </div>
