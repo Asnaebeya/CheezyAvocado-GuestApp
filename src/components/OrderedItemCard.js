@@ -94,7 +94,7 @@ const OrderedItemCard = (props) => {
         const updateObject = {
             ...foods[foodIndex],
             amount:
-                totalAmount <= 4
+                totalAmount <= 10
                     ? foods[foodIndex].amount + 1
                     : foods[foodIndex].amount,
         };

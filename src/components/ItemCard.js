@@ -202,7 +202,7 @@ const ItemCard = (props) => {
         const updateObject = {
             ...foods[foodIndex],
             amount:
-                calculateAmount() <= 4
+                calculateAmount() <= 10
                     ? foods[foodIndex].amount + 1
                     : foods[foodIndex].amount,
         };
